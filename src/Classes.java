@@ -35,3 +35,5 @@ public enum Classes {
         return atributos;
     }
 }
+//    final int[][] modMago = {/*vida*/{8,14},/*defesa*/{1,4},/*força*/{5,9},/*Destreza*/{2,4},/*velociade*/{2,5}};
+//    final int[][] modLadino = {/*vida*/{7,13},/*defesa*/{2,4},/*força*/{4,7},/*Destreza*/{3,6},/*velociade*/{3,6}};
