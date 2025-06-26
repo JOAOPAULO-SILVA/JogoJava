@@ -1,4 +1,5 @@
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
 
 public class Hero extends SerVivo{
@@ -9,6 +10,7 @@ public class Hero extends SerVivo{
     final int[][] modLadino = {/*vida*/{7,13},/*defesa*/{2,4},/*força*/{4,7},/*Destreza*/{3,6},/*velociade*/{3,6}};
     static int herois = 0;
 
+    Classes ladino = Classes.LADINO;
 
     public Hero(String classe){
         switch (classe.toLowerCase(Locale.ROOT)) {
@@ -24,7 +26,7 @@ public class Hero extends SerVivo{
         }
 
     }
-    //geters and seters
+    //getters and setters
     public void setVida(int vida){
         this.vida = vida;
     }
@@ -48,6 +50,12 @@ public class Hero extends SerVivo{
         setForca(aleatorio.nextInt(modClasse[2][1]-modClasse[2][0]+1)+modClasse[2][0]);
         setDestreza(aleatorio.nextInt(modClasse[3][1]-modClasse[3][0]+1)+modClasse[3][0]);
         setVelocidade(aleatorio.nextInt(modClasse[4][1]-modClasse[4][0]+1)+modClasse[4][0]);
+    }
+
+    private int diferanca(String atributo){
+        Map<String, int[]> mapAtributos = ladino.getAtributos();
+        int diferenca = mapAtributos.get(atributo)[1]-mapAtributos.get(atributo)[0]; //Recebe um Map e pega o campo vida, o campo vida é um array de duas posições e faz a difernça do segundo - o primeiro
+        return diferenca;
     }
 
 
