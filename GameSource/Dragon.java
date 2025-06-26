@@ -1,4 +1,4 @@
-public class Dragon extends Monster {
+public class Dragon extends Character {
 
 
 
