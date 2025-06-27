@@ -1,17 +1,17 @@
 public class Hero extends Character {
 
-    private HeroType tipo;
+    private CharacterType tipo;
 
     public Hero(String nome, String tipoHeroiString) {
 
         super(nome, 0, 0, 0, 0, 0);
 
         try{
-            this.tipo = HeroType.valueOf(tipoHeroiString.toUpperCase());
+            this.tipo = CharacterType.valueOf(tipoHeroiString.toUpperCase());
         } catch (IllegalArgumentException e) {
 
             System.err.println("Erro: Tipo de herói inválido \"" + tipoHeroiString + "\". Usando tipo Paladin como padrão.");
-            this.tipo = HeroType.PALADIN; // Define um tipo padrão para evitar null
+            this.tipo = CharacterType.PALADIN; // Define um tipo padrão para evitar null
         }
 
         setAttributes();
@@ -20,37 +20,36 @@ public class Hero extends Character {
     private void setAttributes() {
         switch (this.tipo) {
             case PALADIN:
-                this.setSpeed(8);
-                this.setStrength(15);
-                this.setHP(120);
-                this.setResistance(12);
-                this.setDexterity(7);
+                this.setSpeed(CharacterAttributes.PALADIN_SPEED);
+                this.setStrength(CharacterAttributes.PALADIN_STRENGTH);
+                this.setHP(CharacterAttributes.PALADIN_HP);
+                this.setResistance(CharacterAttributes.PALADIN_RESISTANCE);
+                this.setDexterity(CharacterAttributes.PALADIN_DEXTERITY);
                 break;
             case WIZARD:
-                this.setSpeed(7);
-                this.setStrength(5);
-                this.setHP(70);
-                this.setResistance(4);
-                this.setDexterity(15);
+                this.setSpeed(CharacterAttributes.WIZARD_SPEED);
+                this.setStrength(CharacterAttributes.WIZARD_STRENGTH);
+                this.setHP(CharacterAttributes.WIZARD_HP);
+                this.setResistance(CharacterAttributes.WIZARD_RESISTANCE);
+                this.setDexterity(CharacterAttributes.WIZARD_DEXTERITY);
                 break;
             case ARCHER:
-                this.setSpeed(12);
-                this.setStrength(10);
-                this.setHP(80);
-                this.setResistance(6);
-                this.setDexterity(12);
+                this.setSpeed(CharacterAttributes.ARCHER_SPEED);
+                this.setStrength(CharacterAttributes.ARCHER_STRENGTH);
+                this.setHP(CharacterAttributes.ARCHER_HP);
+                this.setResistance(CharacterAttributes.ARCHER_RESISTANCE);
+                this.setDexterity(CharacterAttributes.ARCHER_DEXTERITY);
                 break;
             case STEALTH:
-                this.setSpeed(15);
-                this.setStrength(9);
-                this.setHP(75);
-                this.setResistance(5);
-                this.setDexterity(15);
+                this.setSpeed(CharacterAttributes.STEALTH_SPEED);
+                this.setStrength(CharacterAttributes.STEALTH_STRENGTH);
+                this.setHP(CharacterAttributes.STEALTH_HP);
+                this.setResistance(CharacterAttributes.STEALTH_RESISTANCE);
+                this.setDexterity(CharacterAttributes.STEALTH_DEXTERITY);
                 break;
         }
     }
-
-    public HeroType getType() {
+    public CharacterType getType() {
         return tipo;
     }
 

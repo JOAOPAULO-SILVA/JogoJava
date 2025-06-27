@@ -20,14 +20,9 @@ public class Main {
 
 
         System.out.println("\n Testando Monstros (Falta definir e tal ) ");
-        Monster monstroGenerico = new Monster("Monstro Genérico", 6, 8, 70, 7, 5);
-        System.out.println("Monstro Genérico:");
-        System.out.println("  Nome: " + monstroGenerico.getName());
-        System.out.println("  HP: " + monstroGenerico.getHP());
-        System.out.println("  Resistência: " + monstroGenerico.getResistance());
-        System.out.println("  Força: " + monstroGenerico.getStrength());
-        System.out.println("  Destreza: " + monstroGenerico.getDexterity());
-        System.out.println("  Velocidade: " + monstroGenerico.getSpeed());
+        Monster Bruxa = new Monster("Bruxa má do Oeste","Witch");
+        System.out.println("Bruxa:");
+        System.out.println(Bruxa.toString());
         System.out.println("\n-----------------------------------\n");
 
     }
