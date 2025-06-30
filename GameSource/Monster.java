@@ -10,7 +10,7 @@ public Monster(String nome, String tipoCharacterString) {
         } catch (IllegalArgumentException e) {
 
         System.err.println("Erro: Tipo de herói inválido \"" + tipoCharacterString + "\". Usando tipo Orc como padrão.");
-        this.tipo = CharacterType.ORC; // Define um tipo padrão para evitar null
+        this.tipo = CharacterType.ORC;
         }
 
         setAttributes();

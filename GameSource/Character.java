@@ -1,30 +1,35 @@
 public class Character {
-    String Name;
-    int Speed;
-    int Strength;
+    String name;
+    int speed;
+    int strength;
     int HP;
-    int Resistance;
+    int resistance;
     int dexterity;
 
-    public Character(String Name, int Speed, int Strength, int HP, int Resistance, int dexterity) {
-        this.Name = Name;
-        this.Speed = Speed;
-        this.Strength = Strength;
+    private int posX;
+    private int posY;
+
+    public Character(String name, int speed, int strength, int HP, int resistance, int dexterity) {
+        this.name = name;
+        this.speed = speed;
+        this.strength = strength;
         this.HP = HP;
-        this.Resistance = Resistance;
+        this.resistance = resistance;
         this.dexterity = dexterity;
+        this.posX = -1;
+        this.posY = -1;
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public int getSpeed() {
-        return Speed;
+        return speed;
     }
 
     public int getStrength() {
-        return Strength;
+        return strength;
     }
 
     public int getHP() {
@@ -32,19 +37,34 @@ public class Character {
     }
 
     public int getResistance() {
-        return Resistance;
+        return resistance;
     }
 
     public int getDexterity() {
         return dexterity;
     }
+    public int getPosX() {
+        return posX;
+    }
+
+    public int getPosY() {
+        return posY;
+    }
+
+    public void setPosX(int posX) {
+        this.posX = posX;
+    }
+
+    public void setPosY(int posY) {
+        this.posY = posY;
+    }
 
     public void setSpeed(int speed) {
-        Speed = speed;
+        this.speed = speed;
     }
 
     public void setStrength(int strength) {
-        Strength = strength;
+        this.strength = strength;
     }
 
     public void setHP(int HP) {
@@ -52,7 +72,7 @@ public class Character {
     }
 
     public void setResistance(int resistance) {
-        Resistance = resistance;
+        this.resistance = resistance;
     }
 
     public void setDexterity(int dexterity) {

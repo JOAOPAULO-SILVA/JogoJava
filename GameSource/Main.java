@@ -1,29 +1,29 @@
 public class Main {
     public static void main(String[] args) {
-        System.out.println("--- Testando Criação de Heróis via Classe Hero ---");
+        // 1. Cria o campo de batalha
+        Battlefield campo = new Battlefield(5, 5); // Um tabuleiro 5x5
 
+        // 2. Cria alguns personagens
+        // Lembre-se de corrigir o bug nos setters da classe Character!
         Hero paladino = new Hero("Sir Arthur", "PALADIN");
-        Hero mago = new Hero("Merlin", "WIZARD");
-        Hero furtivo = new Hero("Corvo", "STEALTH");
+        Monster sla = new Monster("Ugluk", "ORC");
 
-        System.out.println("Paladino:");
-        System.out.println(paladino.toString()); // O toString() de Hero já mostra todos os atributos
-        System.out.println("\n-----------------------------------\n");
+        // 3. Adiciona os personagens ao campo de batalha
+        System.out.println("Adicionando personagens ao campo...");
+        campo.adicionarPersonagem(paladino, 0, 2); // Coluna 0, Linha 2
+        campo.adicionarPersonagem(sla, 4, 2);     // Coluna 4, Linha 2
 
-        System.out.println("Mago:");
-        System.out.println(mago.toString());
-        System.out.println("\n-----------------------------------\n");
+        // 4. Mostra o estado inicial do tabuleiro
+        campo.exibirTabuleiro();
 
-        System.out.println("Furtivo:");
-        System.out.println(furtivo.toString());
-        System.out.println("\n-----------------------------------\n");
+        // 5. Simula um movimento
+        System.out.println("Movendo o Paladino...");
+        campo.moverPersonagem(paladino, 1, 2);
 
-
-        System.out.println("\n Testando Monstros (Falta definir e tal ) ");
-        Monster Bruxa = new Monster("Bruxa má do Oeste","Witch");
-        System.out.println("Bruxa:");
-        System.out.println(Bruxa.toString());
-        System.out.println("\n-----------------------------------\n");
+        // 6. Mostra o estado final
+        campo.exibirTabuleiro();
+        campo.removerPersonagem(sla);
+        campo.exibirTabuleiro();
 
     }
 }

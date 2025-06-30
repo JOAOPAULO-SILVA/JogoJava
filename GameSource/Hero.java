@@ -11,7 +11,7 @@ public class Hero extends Character {
         } catch (IllegalArgumentException e) {
 
             System.err.println("Erro: Tipo de herói inválido \"" + tipoHeroiString + "\". Usando tipo Paladin como padrão.");
-            this.tipo = CharacterType.PALADIN; // Define um tipo padrão para evitar null
+            this.tipo = CharacterType.PALADIN;
         }
 
         setAttributes();
