@@ -1,7 +1,9 @@
+import java.util.Random;
+
 public class Hero extends Character {
 
     private CharacterType tipo;
-
+    private static final Random random = new Random();
     public Hero(String nome, String tipoHeroiString) {
 
         super(nome, 0, 0, 0, 0, 0);
@@ -47,6 +49,64 @@ public class Hero extends Character {
                 this.setResistance(CharacterAttributes.STEALTH_RESISTANCE);
                 this.setDexterity(CharacterAttributes.STEALTH_DEXTERITY);
                 break;
+        }
+    }
+
+    public AttackResult realizarAtaque(Character alvo) {
+        int chanceAcertoBase;
+        int danoBase;
+        double multiplicadorCritico;
+
+        switch (this.tipo) {
+            case PALADIN:
+                chanceAcertoBase = 75;
+                danoBase = this.getStrength();
+                multiplicadorCritico = 1.6; 
+                break;
+            case WIZARD:
+                chanceAcertoBase = 60;
+                danoBase = this.getDexterity() * 2;
+                multiplicadorCritico = 1.8;
+                break;
+            case ARCHER:
+                chanceAcertoBase = 80;
+                danoBase = this.getStrength() + (this.getDexterity() / 2);
+                multiplicadorCritico = 1.7;
+                break;
+            case STEALTH:
+                chanceAcertoBase = 70;
+                danoBase = this.getStrength() + this.getDexterity();
+                multiplicadorCritico = 2.0;
+                break;
+            default:
+                chanceAcertoBase = 70;
+                danoBase = this.getStrength();
+                multiplicadorCritico = 1.5;
+                break;
+        }
+
+        int modificadorDestreza = (this.getDexterity() - alvo.getDexterity());
+        int chanceFinalAcerto = chanceAcertoBase + modificadorDestreza;
+
+        chanceFinalAcerto = Math.max(10, Math.min(95, chanceFinalAcerto));
+
+        int rolagem = random.nextInt(100) + 1;
+
+        if (rolagem <= 5) {
+            System.out.println(this.getName() + " errou o ataque criticamente contra " + alvo.getName() + "!");
+            return AttackResult.ERROU;
+        } else if (rolagem > 95) {
+            int dano = (int) (danoBase * multiplicadorCritico);
+            alvo.receberDano(dano);
+            System.out.println(this.getName() + " acertou um CRITICAL HIT em " + alvo.getName() + " causando " + dano + " de dano!");
+            return AttackResult.CRITICAL_HIT;
+        } else if (rolagem <= chanceFinalAcerto) {
+            alvo.receberDano(danoBase);
+            System.out.println(this.getName() + " acertou " + alvo.getName() + " causando " + danoBase + " de dano.");
+            return AttackResult.ACERTOU;
+        } else {
+            System.out.println(this.getName() + " errou o ataque contra " + alvo.getName() + ".");
+            return AttackResult.ERROU;
         }
     }
     public CharacterType getType() {

@@ -20,6 +20,7 @@ public class Character {
         this.posY = -1;
     }
 
+    //Getters
     public String getName() {
         return name;
     }
@@ -51,6 +52,8 @@ public class Character {
         return posY;
     }
 
+
+    //Setters
     public void setPosX(int posX) {
         this.posX = posX;
     }
@@ -78,4 +81,14 @@ public class Character {
     public void setDexterity(int dexterity) {
         this.dexterity = dexterity;
     }
+
+    public void receberDano(int dano) {
+        int danoReal = Math.max(0, dano - this.resistance);
+        this.HP -= danoReal;
+        if (this.HP < 0) {
+            this.HP = 0;
+        }
+    }
+
+
 }
