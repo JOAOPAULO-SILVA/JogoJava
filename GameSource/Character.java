@@ -82,12 +82,14 @@ public class Character {
         this.dexterity = dexterity;
     }
 
-    public void receberDano(int dano) {
+    public int receberDano(int dano) {
         int danoReal = Math.max(0, dano - this.resistance);
         this.HP -= danoReal;
         if (this.HP < 0) {
             this.HP = 0;
         }
+        return danoReal;
+
     }
 
 

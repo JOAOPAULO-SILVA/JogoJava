@@ -61,7 +61,7 @@ public class Hero extends Character {
             case PALADIN:
                 chanceAcertoBase = 75;
                 danoBase = this.getStrength();
-                multiplicadorCritico = 1.6; 
+                multiplicadorCritico = 1.5;
                 break;
             case WIZARD:
                 chanceAcertoBase = 60;
@@ -71,7 +71,7 @@ public class Hero extends Character {
             case ARCHER:
                 chanceAcertoBase = 80;
                 danoBase = this.getStrength() + (this.getDexterity() / 2);
-                multiplicadorCritico = 1.7;
+                multiplicadorCritico = 2.0;
                 break;
             case STEALTH:
                 chanceAcertoBase = 70;
@@ -89,27 +89,37 @@ public class Hero extends Character {
         int chanceFinalAcerto = chanceAcertoBase + modificadorDestreza;
 
         chanceFinalAcerto = Math.max(10, Math.min(95, chanceFinalAcerto));
-
         int rolagem = random.nextInt(100) + 1;
 
+
         if (rolagem <= 5) {
-            System.out.println(this.getName() + " errou o ataque criticamente contra " + alvo.getName() + "!");
+            //Erro
+            System.out.printf("%s errou o ataque criticamente contra %s!%n", this.getName(), alvo.getName());
             return AttackResult.ERROU;
+
         } else if (rolagem > 95) {
-            int dano = (int) (danoBase * multiplicadorCritico);
-            alvo.receberDano(dano);
-            System.out.println(this.getName() + " acertou um CRITICAL HIT em " + alvo.getName() + " causando " + dano + " de dano!");
+            //Crítico
+            int danoCritico = (int) (danoBase * multiplicadorCritico);
+
+            int danoAplicado = alvo.receberDano(danoCritico);
+            System.out.printf("%s acertou um CRITICAL HIT em %s causando %d de dano!\n",
+                    this.getName(), alvo.getName(), danoAplicado);
             return AttackResult.CRITICAL_HIT;
+
         } else if (rolagem <= chanceFinalAcerto) {
-            alvo.receberDano(danoBase);
-            System.out.println(this.getName() + " acertou " + alvo.getName() + " causando " + danoBase + " de dano.");
+            // DANO NORMAL
+            int danoAplicado = alvo.receberDano(danoBase);
+
+            System.out.printf("%s acertou %s causando %d de dano.\n",
+                    this.getName(), alvo.getName(), danoAplicado);
             return AttackResult.ACERTOU;
+
         } else {
-            System.out.println(this.getName() + " errou o ataque contra " + alvo.getName() + ".");
+            System.out.printf("%s errou o ataque contra %s.%n", this.getName(), alvo.getName());
             return AttackResult.ERROU;
         }
     }
-    public CharacterType getType() {
+    public CharacterType getType(){
         return tipo;
     }
 
