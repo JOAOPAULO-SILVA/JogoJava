@@ -1,8 +1,8 @@
-Jogo de Batalha de Turnos em Java
+##Jogo de Batalha de Turnos em Java
 Este projeto é um jogo de batalha de turnos desenvolvido em Java como parte da disciplina de Programação de Computadores II. O objetivo é criar um jogo que simula batalhas entre heróis e monstros, aplicando conceitos fundamentais de Programação Orientada a Objetos (POO). 
 
 
-📜 Descrição
+##📜 Descrição
 O jogo apresenta uma batalha em um campo onde heróis enfrentam monstros. Cada personagem possui atributos únicos como Pontos de Vida (HP), Força, Defesa, Destreza e Velocidade. A ordem das ações em cada turno é determinada pela velocidade dos personagens, e o resultado de cada ataque é calculado com base nos atributos do atacante e do defensor. 
 
 
