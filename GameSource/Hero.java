@@ -86,36 +86,38 @@ public class Hero extends Character {
         }
 
         int modificadorDestreza = (this.getDexterity() - alvo.getDexterity());
+
         int chanceFinalAcerto = chanceAcertoBase + modificadorDestreza;
 
         chanceFinalAcerto = Math.max(10, Math.min(95, chanceFinalAcerto));
         int rolagem = random.nextInt(100) + 1;
 
-
         if (rolagem <= 5) {
-            //Erro
-            System.out.printf("%s errou o ataque criticamente contra %s!%n", this.getName(), alvo.getName());
+            String mensagem = String.format("%s errou o ataque criticamente contra %s!", this.getName(), alvo.getName());
+            Logger.log(mensagem);
+
             return AttackResult.ERROU;
-
         } else if (rolagem > 95) {
-            //Crítico
             int danoCritico = (int) (danoBase * multiplicadorCritico);
-
             int danoAplicado = alvo.receberDano(danoCritico);
-            System.out.printf("%s acertou um CRITICAL HIT em %s causando %d de dano!\n",
-                    this.getName(), alvo.getName(), danoAplicado);
+            String mensagem = String.format("%s acertou um CRITICAL HIT em %s causando %d de dano!", this.getName(), alvo.getName(), danoAplicado);
+
+            Logger.log(mensagem);
+
             return AttackResult.CRITICAL_HIT;
-
         } else if (rolagem <= chanceFinalAcerto) {
-            // DANO NORMAL
+
             int danoAplicado = alvo.receberDano(danoBase);
+            String mensagem = String.format("%s acertou %s causando %d de dano.",this.getName(), alvo.getName(), danoAplicado);
 
-            System.out.printf("%s acertou %s causando %d de dano.\n",
-                    this.getName(), alvo.getName(), danoAplicado);
+            Logger.log(mensagem);
+
             return AttackResult.ACERTOU;
-
         } else {
-            System.out.printf("%s errou o ataque contra %s.%n", this.getName(), alvo.getName());
+            String mensagem = String.format("%s errou o ataque contra %s.", this.getName(), alvo.getName());
+
+            Logger.log(mensagem);
+
             return AttackResult.ERROU;
         }
     }
