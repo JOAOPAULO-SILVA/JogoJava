@@ -1,10 +1,12 @@
 public class Character {
-    String name;
-    int speed;
-    int strength;
-    int HP;
-    int resistance;
-    int dexterity;
+    protected String name;
+    protected int speed;
+    protected int strength;
+    protected int HP;
+    protected int resistance;
+    protected int dexterity;
+    protected CharacterType tipo;
+    protected int maxHP;
 
     private int posX;
     private int posY;
@@ -18,79 +20,46 @@ public class Character {
         this.dexterity = dexterity;
         this.posX = -1;
         this.posY = -1;
+        this.tipo = null;
+        this.maxHP = HP;
     }
 
-    //Getters
-    public String getName() {
-        return name;
+    protected void setTipo(CharacterType tipo) {
+        this.tipo = tipo;
     }
 
-    public int getSpeed() {
-        return speed;
-    }
-
-    public int getStrength() {
-        return strength;
-    }
-
-    public int getHP() {
-        return HP;
-    }
-
-    public int getResistance() {
-        return resistance;
-    }
-
-    public int getDexterity() {
-        return dexterity;
-    }
-    public int getPosX() {
-        return posX;
-    }
-
-    public int getPosY() {
-        return posY;
-    }
-
-
-    //Setters
-    public void setPosX(int posX) {
-        this.posX = posX;
-    }
-
-    public void setPosY(int posY) {
-        this.posY = posY;
-    }
-
-    public void setSpeed(int speed) {
-        this.speed = speed;
-    }
-
-    public void setStrength(int strength) {
-        this.strength = strength;
+     public int getMaxHP() {
+        return this.maxHP;
     }
 
     public void setHP(int HP) {
         this.HP = HP;
+        this.maxHP = HP;
     }
 
-    public void setResistance(int resistance) {
-        this.resistance = resistance;
-    }
+    // Getters
+    public String getName() { return name; }
+    public int getSpeed() { return speed; }
+    public int getStrength() { return strength; }
+    public int getHP() { return HP; }
+    public int getResistance() { return resistance; }
+    public int getDexterity() { return dexterity; }
+    public int getPosX() { return posX; }
+    public int getPosY() { return posY; }
+    public CharacterType getType() { return tipo; }
 
-    public void setDexterity(int dexterity) {
-        this.dexterity = dexterity;
-    }
+    //Setters
+    public void setPosX(int posX) { this.posX = posX; }
+    public void setPosY(int posY) { this.posY = posY; }
+    public void setSpeed(int speed) { this.speed = speed; }
+    public void setStrength(int strength) { this.strength = strength; }
+    public void setResistance(int resistance) { this.resistance = resistance; }
+    public void setDexterity(int dexterity) { this.dexterity = dexterity; }
 
     public int receberDano(int dano) {
         int danoReal = Math.max(0, dano - this.resistance);
         this.HP -= danoReal;
-        if (this.HP < 0) {
-            this.HP = 0;
-        }
+        if (this.HP < 0) { this.HP = 0; }
         return danoReal;
-
     }
-
-
 }

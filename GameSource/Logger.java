@@ -9,8 +9,13 @@ public class Logger {
 
     private Logger() {}
     public static void log(String message) {
+        System.out.println(message);
         String timestamp = LocalTime.now().format(timeFormatter);
-        logs.add(String.format("[%s] %s", timestamp, message));
+        String logMessage = String.format("[%s] %s", timestamp, message);
+
+        logs.add(logMessage);
+
+
     }
 
     public static void exibirLogs() {

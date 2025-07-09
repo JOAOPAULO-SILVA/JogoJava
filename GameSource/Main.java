@@ -1,38 +1,65 @@
 public class Main {
+
     public static void main(String[] args) {
-        // Não precisamos mais de: Logger logger = Logger.getInstance();
+        // Limpa os logs de jogos anteriores e inicia um novo registro
+        Logger.limparLogs();
+        Logger.log("Iniciando modo de teste...");
+        System.out.println("--- MODO DE TESTE ---");
 
-        // 1. Cria o campo de batalha
-        Battlefield campo = new Battlefield(10, 5);
-        Logger.log("Campo de batalha 10x5 criado."); // Chamada direta
-
-        // 2. Cria os personagens
+        // --- 1. CONFIGURAÇÃO DO CENÁRIO ---
+        Battlefield campo = new Battlefield(6, 5);
         Hero paladino = new Hero("Arthur", "PALADIN");
         Hero mago = new Hero("Gandalf", "WIZARD");
-        Monster orc1 = new Monster("Ugluk", "ORC");
-        Monster orc2 = new Monster("Grishnakh", "ORC");
-        Monster bruxa = new Monster("Morwen", "WITCH");
-        Logger.log("Personagens criados: Arthur, Gandalf, Ugluk, Grishnakh, Morwen.");
+        Monster orc = new Monster("Shrek", "ORC");
+        Monster bruxa = new Monster("Bruxa má do oeste", "WITCH");
 
-        // 3. Adiciona os personagens ao campo de batalha
-        Logger.log("Adicionando personagens ao campo..."); // Chamada direta
         campo.adicionarPersonagem(paladino, 1, 2);
         campo.adicionarPersonagem(mago, 1, 3);
-        campo.adicionarPersonagem(orc1, 8, 1);
-        campo.adicionarPersonagem(orc2, 8, 3);
-        campo.adicionarPersonagem(bruxa, 7, 2);
+        campo.adicionarPersonagem(orc, 5, 2);
+        campo.adicionarPersonagem(bruxa, 4, 3);
+        Logger.log("Personagens posicionados no campo de batalha.");
 
-        // 4. Mostra o estado inicial do tabuleiro
+        // --- 2. EXIBE O ESTADO INICIAL ---
+        System.out.println("\n--- ESTADO INICIAL DO CAMPO ---");
         campo.exibirTabuleiro();
 
-        // 5. Simula um ataque
-        Logger.log(String.format(">>> %s inicia um ataque contra %s! <<<", paladino.getName(), orc1.getName()));
-        paladino.realizarAtaque(orc1);
+        // --- 3. EXECUÇÃO DE AÇÕES ESPECÍFICAS ---
+        System.out.println("\n--- EXECUTANDO AÇÕES DE TESTE ---");
 
-        // 6. Mostra o estado final
+        // Ação 1: Herói ataca Monstro
+        Logger.log("AÇÃO 1: Arthur (Paladino) ataca Shrek (Orc).");
+        paladino.realizarAtaque(orc);
+
+        // Ação 2: Monstro contra-ataca outro Herói
+        Logger.log("AÇÃO 2: Morwen (Bruxa) ataca Gandalf (Mago).");
+        bruxa.realizarAtaque(mago);
+
+        // Ação 3: O outro Herói também ataca
+        Logger.log("AÇÃO 3: Gandalf (Mago) também foca em Shrek (Orc).");
+        mago.realizarAtaque(orc);
+
+        // Ação 4: O monstro ferido ataca de volta
+        if (orc.getHP() > 0) {
+            Logger.log("AÇÃO 4: Shrek (Orc), ferido, ataca Arthur (Paladino).");
+            orc.realizarAtaque(paladino);
+        }
+
+        // Ação 5: Herói tenta finalizar o monstro
+        Logger.log("AÇÃO 5: Arthur (Paladino) ataca Shrek (Orc) novamente para tentar finalizá-lo.");
+        paladino.realizarAtaque(orc);
+
+        // Verificando se o alvo foi derrotado
+        if (orc.getHP() <= 0) {
+            Logger.log("SUCESSO! Shrek foi derrotado!");
+            System.out.println("\n!!! Shrek foi derrotado e removido do campo !!!");
+            campo.removerPersonagem(orc);
+        }
+
+
+        // --- 4. EXIBE O ESTADO FINAL E OS LOGS ---
+        System.out.println("\n--- ESTADO FINAL DO CAMPO ---");
         campo.exibirTabuleiro();
 
-        // 7. Exibe todos os logs registrados no final da execução
-        Logger.exibirLogs(); // Chamada direta
+        Logger.exibirLogs();
     }
 }

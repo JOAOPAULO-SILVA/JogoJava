@@ -1,25 +1,27 @@
 import java.util.Random;
 
 public class Monster extends Character {
-    private CharacterType tipo;
     private static final Random random = new Random();
 
     public Monster(String nome, String tipoCharacterString) {
         super(nome, 0, 0, 0, 0, 0);
 
+        CharacterType tipoMonstro;
         try {
-            this.tipo = CharacterType.valueOf(tipoCharacterString.toUpperCase());
+            tipoMonstro = CharacterType.valueOf(tipoCharacterString.toUpperCase());
         } catch (IllegalArgumentException e) {
             System.err.println("Erro: Tipo de monstro inválido \"" + tipoCharacterString + "\". Usando tipo Orc como padrão.");
-            this.tipo = CharacterType.ORC;
+            tipoMonstro = CharacterType.ORC;
         }
+
+        this.setTipo(tipoMonstro);
 
         setAttributes();
     }
 
     private int getRandom(int min, int max) {
-        if (min > max) {
-            return max;
+        if (min >= max) {
+            return min;
         }
         return random.nextInt((max - min) + 1) + min;
     }
@@ -50,10 +52,23 @@ public class Monster extends Character {
         }
     }
 
-    public CharacterType getType() {
-        return tipo;
+    public AttackResult realizarAtaque(Character alvo) {
+        int danoBase = this.getStrength();
+        int danoAplicado = alvo.receberDano(danoBase);
+
+        String mensagem = String.format("%s atacou %s, causando %d de dano! (Vida restante: %s %d/%d, %s %d/%d)",
+                this.getName(),
+                alvo.getName(),
+                danoAplicado,
+                this.getName(), this.getHP(), this.getMaxHP(),
+                alvo.getName(), alvo.getHP(), alvo.getMaxHP()
+        );
+        Logger.log(mensagem);
+
+        return AttackResult.ACERTOU;
     }
 
+    @Override
     public String toString() {
         return String.format("%s %s\n  HP: %d\n  Defesa: %d\n  Força: %d\n  Destreza: %d\n  Velocidade: %d",
                 tipo.toString(), getName(), getHP(), getResistance(), getStrength(), getDexterity(), getSpeed());

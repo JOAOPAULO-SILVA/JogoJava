@@ -101,7 +101,7 @@ public class Battlefield {
                         hero.getName().charAt(0),
                         hero.getName(),
                         hero.getHP(),
-                        getMaxHP(hero)); // Mostra o HP atual e o máximo
+                        hero.getMaxHP()); // Mostra o HP atual e o máximo
             }
         }
 
@@ -119,13 +119,17 @@ public class Battlefield {
         System.out.println("-------------------------");
     }
 
-    private int getMaxHP(Hero hero) {
-        return switch (hero.getType()) {
-            case PALADIN -> CharacterAttributes.PALADIN_HP;
-            case WIZARD -> CharacterAttributes.WIZARD_HP;
-            case ARCHER -> CharacterAttributes.ARCHER_HP;
-            case STEALTH -> CharacterAttributes.STEALTH_HP;
-            default -> 0;
-        };
+    public List<Hero> getHeroes() {
+        return this.heroes;
     }
+    public int getNumeroDeHerois() {
+        return this.heroes.size();
+    }
+    public List<Monster> getMonsters() {
+        return this.monsters;
+    }
+    public int getNumeroDeMonstros() {
+        return this.monsters.size();
+    }
+
 }

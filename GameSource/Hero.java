@@ -2,19 +2,20 @@ import java.util.Random;
 
 public class Hero extends Character {
 
-    private CharacterType tipo;
     private static final Random random = new Random();
-    public Hero(String nome, String tipoHeroiString) {
 
+    public Hero(String nome, String tipoHeroiString) {
         super(nome, 0, 0, 0, 0, 0);
 
-        try{
-            this.tipo = CharacterType.valueOf(tipoHeroiString.toUpperCase());
+        CharacterType tipoHeroi;
+        try {
+            tipoHeroi = CharacterType.valueOf(tipoHeroiString.toUpperCase());
         } catch (IllegalArgumentException e) {
-
             System.err.println("Erro: Tipo de herói inválido \"" + tipoHeroiString + "\". Usando tipo Paladin como padrão.");
-            this.tipo = CharacterType.PALADIN;
+            tipoHeroi = CharacterType.PALADIN;
         }
+
+        this.setTipo(tipoHeroi);
 
         setAttributes();
     }
@@ -86,48 +87,41 @@ public class Hero extends Character {
         }
 
         int modificadorDestreza = (this.getDexterity() - alvo.getDexterity());
-
         int chanceFinalAcerto = chanceAcertoBase + modificadorDestreza;
-
         chanceFinalAcerto = Math.max(10, Math.min(95, chanceFinalAcerto));
         int rolagem = random.nextInt(100) + 1;
 
         if (rolagem <= 5) {
             String mensagem = String.format("%s errou o ataque criticamente contra %s!", this.getName(), alvo.getName());
             Logger.log(mensagem);
-
             return AttackResult.ERROU;
         } else if (rolagem > 95) {
             int danoCritico = (int) (danoBase * multiplicadorCritico);
             int danoAplicado = alvo.receberDano(danoCritico);
-            String mensagem = String.format("%s acertou um CRITICAL HIT em %s causando %d de dano!", this.getName(), alvo.getName(), danoAplicado);
-
+            String mensagem = String.format("CRITICAL HIT! %s causou %d de dano em %s. (Vida restante: %s %d/%d, %s %d/%d)",
+                    this.getName(), danoAplicado, alvo.getName(),
+                    this.getName(), this.getHP(), this.getMaxHP(),
+                    alvo.getName(), alvo.getHP(), alvo.getMaxHP()
+            );
             Logger.log(mensagem);
-
             return AttackResult.CRITICAL_HIT;
         } else if (rolagem <= chanceFinalAcerto) {
-
             int danoAplicado = alvo.receberDano(danoBase);
-            String mensagem = String.format("%s acertou %s causando %d de dano.",this.getName(), alvo.getName(), danoAplicado);
-
+            String mensagem = String.format("%s acertou %s, causando %d de dano. (Vida restante: %s %d/%d, %s %d/%d)",
+                    this.getName(), alvo.getName(), danoAplicado,
+                    this.getName(), this.getHP(), this.getMaxHP(),
+                    alvo.getName(), alvo.getHP(), alvo.getMaxHP()
+            );
             Logger.log(mensagem);
-
             return AttackResult.ACERTOU;
         } else {
             String mensagem = String.format("%s errou o ataque contra %s.", this.getName(), alvo.getName());
-
             Logger.log(mensagem);
-
             return AttackResult.ERROU;
         }
     }
-    public CharacterType getType(){
-        return tipo;
-    }
-
     public String toString() {
         return String.format("%s %s\n  HP: %d\n  Defesa: %d\n  Força: %d\n  Destreza: %d\n  Velocidade: %d",
                 tipo.toString(), getName(), getHP(), getResistance(), getStrength(), getDexterity(), getSpeed());
-
     }
 }
