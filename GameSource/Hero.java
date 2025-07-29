@@ -58,24 +58,25 @@ public class Hero extends Character {
         int danoBase;
         double multiplicadorCritico;
 
+        // Valores atualizados da última vez
         switch (this.tipo) {
             case PALADIN:
-                chanceAcertoBase = 75;
+                chanceAcertoBase = 85;
                 danoBase = this.getStrength();
                 multiplicadorCritico = 1.5;
                 break;
             case WIZARD:
-                chanceAcertoBase = 60;
+                chanceAcertoBase = 70;
                 danoBase = this.getDexterity() * 2;
                 multiplicadorCritico = 1.8;
                 break;
             case ARCHER:
-                chanceAcertoBase = 80;
+                chanceAcertoBase = 90;
                 danoBase = this.getStrength() + (this.getDexterity() / 2);
                 multiplicadorCritico = 2.0;
                 break;
             case STEALTH:
-                chanceAcertoBase = 70;
+                chanceAcertoBase = 80;
                 danoBase = this.getStrength() + this.getDexterity();
                 multiplicadorCritico = 2.0;
                 break;
@@ -95,26 +96,43 @@ public class Hero extends Character {
             String mensagem = String.format("%s errou o ataque criticamente contra %s!", this.getName(), alvo.getName());
             Logger.log(mensagem);
             return AttackResult.ERROU;
-        } else if (rolagem > 95) {
+
+        } else if (rolagem > 95) { // ATAQUE CRÍTICO
             int danoCritico = (int) (danoBase * multiplicadorCritico);
             int danoAplicado = alvo.receberDano(danoCritico);
-            String mensagem = String.format("CRITICAL HIT! %s causou %d de dano em %s. (Vida restante: %s %d/%d, %s %d/%d)",
-                    this.getName(), danoAplicado, alvo.getName(),
-                    this.getName(), this.getHP(), this.getMaxHP(),
-                    alvo.getName(), alvo.getHP(), alvo.getMaxHP()
-            );
-            Logger.log(mensagem);
+
+            if (danoAplicado == 0 && danoCritico > 0) {
+                String mensagem = String.format("CRITICAL HIT! %s investe com força total, mas %s bloqueia o golpe!",
+                        this.getName(), alvo.getName());
+                Logger.log(mensagem);
+            } else {
+                String mensagem = String.format("CRITICAL HIT! %s causou %d de dano em %s. (Vida restante: %s %d/%d, %s %d/%d)",
+                        this.getName(), danoAplicado, alvo.getName(),
+                        this.getName(), this.getHP(), this.getMaxHP(),
+                        alvo.getName(), alvo.getHP(), alvo.getMaxHP()
+                );
+                Logger.log(mensagem);
+            }
             return AttackResult.CRITICAL_HIT;
-        } else if (rolagem <= chanceFinalAcerto) {
+
+        } else if (rolagem <= chanceFinalAcerto) { // ATAQUE NORMAL
             int danoAplicado = alvo.receberDano(danoBase);
-            String mensagem = String.format("%s acertou %s, causando %d de dano. (Vida restante: %s %d/%d, %s %d/%d)",
-                    this.getName(), alvo.getName(), danoAplicado,
-                    this.getName(), this.getHP(), this.getMaxHP(),
-                    alvo.getName(), alvo.getHP(), alvo.getMaxHP()
-            );
-            Logger.log(mensagem);
+
+            if (danoAplicado == 0 && danoBase > 0) {
+                String mensagem = String.format("%s ataca %s, mas sua defesa absorve todo o impacto!",
+                        this.getName(), alvo.getName());
+                Logger.log(mensagem);
+            } else {
+                String mensagem = String.format("%s acertou %s, causando %d de dano. (Vida restante: %s %d/%d, %s %d/%d)",
+                        this.getName(), alvo.getName(), danoAplicado,
+                        this.getName(), this.getHP(), this.getMaxHP(),
+                        alvo.getName(), alvo.getHP(), alvo.getMaxHP()
+                );
+                Logger.log(mensagem);
+            }
             return AttackResult.ACERTOU;
-        } else {
+
+        } else { // ERRO
             String mensagem = String.format("%s errou o ataque contra %s.", this.getName(), alvo.getName());
             Logger.log(mensagem);
             return AttackResult.ERROU;

@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class TurnManager {
@@ -19,10 +18,21 @@ public class TurnManager {
         turnOrder.addAll(battlefield.getHeroes());
         turnOrder.addAll(battlefield.getMonsters());
 
-        turnOrder.sort(Comparator.comparingInt(Character::getSpeed).reversed());
+        int size = turnOrder.size();
+        for (int i = 0; i < size - 1; i++) {
+            for (int j = 0; j < size - i - 1; j++) {
+                Character personagemEsquerda = turnOrder.get(j);
+                Character personagemDireita = turnOrder.get(j + 1);
+
+                if (personagemEsquerda.getSpeed() < personagemDireita.getSpeed()) {
+                    turnOrder.set(j, personagemDireita);
+                    turnOrder.set(j + 1, personagemEsquerda);
+                }
+            }
+        }
 
         System.out.println("Ordem de turno definida:");
-        for(Character c : turnOrder) {
+        for (Character c : turnOrder) {
             System.out.printf("- %s (Velocidade: %d)\n", c.getName(), c.getSpeed());
         }
     }

@@ -56,13 +56,21 @@ public class Monster extends Character {
         int danoBase = this.getStrength();
         int danoAplicado = alvo.receberDano(danoBase);
 
-        String mensagem = String.format("%s atacou %s, causando %d de dano! (Vida restante: %s %d/%d, %s %d/%d)",
-                this.getName(),
-                alvo.getName(),
-                danoAplicado,
-                this.getName(), this.getHP(), this.getMaxHP(),
-                alvo.getName(), alvo.getHP(), alvo.getMaxHP()
-        );
+        String mensagem;
+        if (danoAplicado == 0 && danoBase > 0) {
+            mensagem = String.format("%s ataca %s, mas sua defesa absorve todo o impacto!",
+                    this.getName(),
+                    alvo.getName()
+            );
+        } else {
+            mensagem = String.format("%s atacou %s, causando %d de dano! (Vida restante: %s %d/%d, %s %d/%d)",
+                    this.getName(),
+                    alvo.getName(),
+                    danoAplicado,
+                    this.getName(), this.getHP(), this.getMaxHP(),
+                    alvo.getName(), alvo.getHP(), alvo.getMaxHP()
+            );
+        }
         Logger.log(mensagem);
 
         return AttackResult.ACERTOU;
