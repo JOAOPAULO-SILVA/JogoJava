@@ -13,21 +13,21 @@ Linguagem: Java
 
 [ ] Implementar Ataque a partir da classe character: Criar o método realizarAtaque na classe Character, seguindo a estrutura do polimorfismo. 
 
-[ ] Implementar IA dos Monstros: Adicionar lógica ao ataque do monstro para que ele possa escolher um alvo, como o herói com menor HP ou defesa. 
+[x] Implementar IA dos Monstros: Adicionar lógica ao ataque do monstro para que ele possa escolher um alvo, como o herói com menor HP ou defesa. 
 
-[ ] Criar a Classe Turno: Desenvolver a classe Turno para gerenciar as rodadas do jogo. 
+[x] Criar a Classe Turno: Desenvolver a classe Turno para gerenciar as rodadas do jogo. 
 
-[ ] Implementar a lógica para ordenar os personagens no início de cada turno com base no atributo velocidade. 
+[x] Implementar a lógica para ordenar os personagens no início de cada turno com base no atributo velocidade. 
 
 [ ] Criar a Classe Game: Implementar a classe Game para controlar o fluxo principal. 
 
 [ ] Adicionar métodos iniciarJogo() e terminarJogo(). 
 
-[ ] Criar um "game loop" que gerencie os turnos até que todos os heróis ou monstros sejam derrotados.
+[x] Criar um "game loop" que gerencie os turnos até que todos os heróis ou monstros sejam derrotados.
 
 [ ] Adicionar lógica para selecionar a dificuldade (Fácil, Médio, Difícil). 
 
-[ ] Criar a Classe Log: Implementar um sistema de log para registrar todos os eventos da partida (ataques, danos, mortes, etc.), permitindo a visualização do que ocorreu no final. 
+[x] Criar a Classe Log: Implementar um sistema de log para registrar todos os eventos da partida (ataques, danos, mortes, etc.), permitindo a visualização do que ocorreu no final. 
 
 ##### Funcionalidades Adicionais:
 
