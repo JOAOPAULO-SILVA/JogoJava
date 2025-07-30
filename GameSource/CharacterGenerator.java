@@ -5,31 +5,17 @@ import java.util.Random;
 public class CharacterGenerator {
 
     private static final Random random = new Random();
-
-    // 1. Voltamos a usar arrays simples e fixos para os nomes
-    private static final String[] nomesDeHerois = {"Arion", "Lira", "Kael", "Seraphina", "Roric"};
-    private static final String[] nomesDeMonstros = {"Grak", "Zorg", "Malpha", "Krag'nar", "Viletongue"};
-
-    // 2. Criamos uma lista simples para guardar os nomes que já saíram
+    private static final String[] nomesHerois = {"Arion", "Lira", "Gandalf", "Seraphina", "Roric"};
+    private static final String[] nomesMonstros = {"Grak", "Zorg", "Malpha", "Krag'nar", "Viletongue", "Snarl"};
     private static final List<String> nomesUsados = new ArrayList<>();
 
-    // Contadores para o caso de todos os nomes se esgotarem
     private static int defaultCounter = 1;
 
     private CharacterGenerator() {}
 
     public static Hero gerarHeroiAleatorio() {
-        String nomeEscolhido;
 
-        if (nomesUsados.size() >= nomesDeHerois.length + nomesDeMonstros.length) {
-            nomeEscolhido = "Herói #" + defaultCounter++;
-        } else {
-            do {
-                nomeEscolhido = nomesDeHerois[random.nextInt(nomesDeHerois.length)];
-            } while (nomesUsados.contains(nomeEscolhido));
-        }
-
-        nomesUsados.add(nomeEscolhido);
+        String nomeEscolhido = getUniqueName(nomesHerois);
 
         CharacterType[] tiposDeHerois = {CharacterType.PALADIN, CharacterType.WIZARD, CharacterType.ARCHER, CharacterType.STEALTH};
         CharacterType tipoEscolhido = tiposDeHerois[random.nextInt(tiposDeHerois.length)];
@@ -38,23 +24,42 @@ public class CharacterGenerator {
         return new Hero(nomeEscolhido, tipoEscolhido.toString());
     }
 
-    public static Monster gerarMonstroAleatorio() {
-        String nomeEscolhido;
+    public static Monster gerarMonstroFacil() {
+        return gerarMonstroPorTipo(new CharacterType[]{CharacterType.ORC});
+    }
 
-        if (nomesUsados.size() >= nomesDeHerois.length + nomesDeMonstros.length) {
-            nomeEscolhido = "Monstro #" + defaultCounter++;
-        } else {
-            do {
-                nomeEscolhido = nomesDeMonstros[random.nextInt(nomesDeMonstros.length)];
-            } while (nomesUsados.contains(nomeEscolhido));
-        }
+    public static Monster gerarMonstroMedio() {
+        return gerarMonstroPorTipo(new CharacterType[]{CharacterType.ORC, CharacterType.WITCH});
+    }
 
-        nomesUsados.add(nomeEscolhido);
+    public static Monster gerarMonstroDificil() {
+        return gerarMonstroPorTipo(new CharacterType[]{CharacterType.WITCH, CharacterType.DRAGON});
+    }
 
-        CharacterType[] tiposDeMonstros = {CharacterType.ORC, CharacterType.WITCH};
-        CharacterType tipoEscolhido = tiposDeMonstros[random.nextInt(tiposDeMonstros.length)];
+    private static Monster gerarMonstroPorTipo(CharacterType[] tiposPossiveis) {
+
+        String nomeEscolhido = getUniqueName(nomesMonstros);
+
+        CharacterType tipoEscolhido = tiposPossiveis[random.nextInt(tiposPossiveis.length)];
 
         Logger.log(String.format("Uma criatura inimiga (%s) chamada %s surge no campo!", tipoEscolhido, nomeEscolhido));
         return new Monster(nomeEscolhido, tipoEscolhido.toString());
+    }
+
+    private static String getUniqueName(String[] Nomes) {
+
+        if (nomesUsados.size() >= Nomes.length) {
+            return "Inimigo #" + defaultCounter++;
+        }
+
+        String nomeEscolhido;
+        // Fica em loop até encontrar um nome que não esteja na lista de "nomesUsados"
+        do {
+            nomeEscolhido = Nomes[random.nextInt(Nomes.length)];
+        } while (nomesUsados.contains(nomeEscolhido));
+
+        // Adiciona o nome encontrado à lista de usados e o retorna
+        nomesUsados.add(nomeEscolhido);
+        return nomeEscolhido;
     }
 }

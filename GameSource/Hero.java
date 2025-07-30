@@ -53,6 +53,7 @@ public class Hero extends Character {
         }
     }
 
+    @Override
     public AttackResult realizarAtaque(Character alvo) {
         int chanceAcertoBase;
         int danoBase;

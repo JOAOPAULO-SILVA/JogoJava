@@ -1,4 +1,4 @@
-public class Character {
+public abstract class Character {
     protected String name;
     protected int speed;
     protected int strength;
@@ -55,6 +55,8 @@ public class Character {
     public void setStrength(int strength) { this.strength = strength; }
     public void setResistance(int resistance) { this.resistance = resistance; }
     public void setDexterity(int dexterity) { this.dexterity = dexterity; }
+
+    public abstract AttackResult realizarAtaque(Character alvo);
 
     public int receberDano(int dano) {
         int danoReal = Math.max(0, dano - this.resistance);

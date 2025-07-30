@@ -52,6 +52,7 @@ public class Monster extends Character {
         }
     }
 
+    @Override
     public AttackResult realizarAtaque(Character alvo) {
         int danoBase = this.getStrength();
         int danoAplicado = alvo.receberDano(danoBase);

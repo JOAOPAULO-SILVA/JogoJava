@@ -60,20 +60,26 @@ public class Battlefield {
     }
 
     public boolean moverPersonagem(Character personagem, int novoX, int novoY) {
-        int antigoX = personagem.getPosX();
-        int antigoY = personagem.getPosY();
-        board[antigoY][antigoX] = null;
-        if (adicionarPersonagem(personagem, novoX, novoY)) {
-            if (personagem instanceof Hero) {
-                heroes.remove(personagem);
-            } else if (personagem instanceof Monster) {
-                monsters.remove(personagem);
-            }
-            return true;
-        } else {
-            board[antigoY][antigoX] = personagem;
+        if (novoX < 0 || novoX >= largura || novoY < 0 || novoY >= altura) {
+            System.out.println("Movimento inválido: Fora do tabuleiro.");
             return false;
         }
+        if (board[novoY][novoX] != null) {
+            System.out.println("Movimento inválido: A posição já está ocupada.");
+            return false;
+        }
+
+        int antigoX = personagem.getPosX();
+        int antigoY = personagem.getPosY();
+
+        board[novoY][novoX] = personagem;
+        personagem.setPosX(novoY);
+        personagem.setPosY(novoY);
+
+        board[antigoY][antigoX] = null;
+
+        Logger.log(String.format("%s moveu-se de (%d,%d) para (%d,%d).", personagem.getName(), antigoX, antigoY, novoX, novoY));
+        return true;
     }
 
 
