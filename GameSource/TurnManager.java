@@ -55,9 +55,16 @@ public class TurnManager {
     }
 
     public void removeCharacter(Character character) {
-        turnOrder.remove(character);
-        if (currentTurnIndex >= turnOrder.size()) {
-            currentTurnIndex = 0;
+        int indiceRemovido = turnOrder.indexOf(character);
+        if (indiceRemovido != -1) {
+            turnOrder.remove(indiceRemovido);
+
+            if (indiceRemovido < currentTurnIndex) {
+                currentTurnIndex--;
+            }
+            if (!turnOrder.isEmpty()) {
+                currentTurnIndex %= turnOrder.size();
+            }
         }
     }
 }

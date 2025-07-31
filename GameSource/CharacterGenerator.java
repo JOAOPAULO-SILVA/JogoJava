@@ -47,14 +47,15 @@ public class CharacterGenerator {
     }
 
     private static String getUniqueName(String[] poolDeNomes) {
-        long nomesDisponiveisNoPool = 0;
-        for(String nome : poolDeNomes) {
-            if(!nomesUsados.contains(nome)){
-                nomesDisponiveisNoPool++;
+        boolean todosUsados = true;
+        for (String nome : poolDeNomes) {
+            if (!nomesUsados.contains(nome)) {
+                todosUsados = false;
+                break;
             }
         }
 
-        if (nomesDisponiveisNoPool == 0) {
+        if (todosUsados) {
             return "Inimigo #" + defaultCounter++;
         }
 

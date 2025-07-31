@@ -39,7 +39,7 @@ public class Game {
             if (personagemAtual instanceof Hero) {
                 if ("INTERATIVO".equals(this.modoDeJogo)) {
                     executarTurnoHeroi((Hero) personagemAtual);
-                } else { // MODO AUTOMÁTICO ou LOG_ONLY
+                } else {
                     executarTurnoHeroiAI((Hero) personagemAtual);
                 }
             } else if (personagemAtual instanceof Monster) {
@@ -60,8 +60,6 @@ public class Game {
                     Thread.currentThread().interrupt();
                 }
             }
-            // No modo LOG_ONLY, não há pausa
-
             turnManager.nextTurn();
         }
         finalizarBatalha();
@@ -76,9 +74,7 @@ public class Game {
         System.out.println("1. Interativo (Você controla os heróis)");
         System.out.println("2. Simulação Automática (IA vs IA com turnos visuais)");
         System.out.println("3. Simulação Rápida (Apenas o resultado final no log)");
-        System.out.print("Sua escolha: ");
-        int escolhaModo = scanner.nextInt();
-        scanner.nextLine();
+        int escolhaModo = lerEscolhaDoJogador(1, 3);
 
         int proximoXHeroi = 1;
         int proximoYHeroi = 1;
@@ -94,18 +90,23 @@ public class Game {
             System.out.println("1. Paladino");
             System.out.println("2. Mago");
             System.out.println("3. Arqueiro");
-            System.out.println("4. Ladino");
-            System.out.print("Sua escolha: ");
-            int escolhaClasse = scanner.nextInt();
-            scanner.nextLine();
-
+            System.out.println("4. Stealth"); // Alterado de "Ladino" para "Stealth"
+            int escolhaClasse = lerEscolhaDoJogador(1, 4);
             String tipoHeroi;
             switch (escolhaClasse) {
-                case 2: tipoHeroi = "WIZARD"; break;
-                case 3: tipoHeroi = "ARCHER"; break;
-                case 4: tipoHeroi = "STEALTH"; break;
+                case 2:
+                    tipoHeroi = "WIZARD";
+                    break;
+                case 3:
+                    tipoHeroi = "ARCHER";
+                    break;
+                case 4:
+                    tipoHeroi = "STEALTH";
+                    break;
                 case 1:
-                default: tipoHeroi = "PALADIN"; break;
+                default:
+                    tipoHeroi = "PALADIN";
+                    break;
             }
             System.out.print("Digite o nome do seu Herói: ");
             String nomeHeroi = scanner.nextLine();
@@ -131,14 +132,12 @@ public class Game {
         System.out.println("1. Fácil");
         System.out.println("2. Médio");
         System.out.println("3. Difícil");
-        System.out.print("Sua escolha: ");
-        int escolhaDif = scanner.nextInt();
-        scanner.nextLine();
-
+        int escolhaDif = lerEscolhaDoJogador(1, 3);
         switch (escolhaDif) {
             case 1:
                 Logger.log("Dificuldade selecionada: Fácil.");
-                for (int i = 0; i < 2; i++) campo.adicionarPersonagem(CharacterGenerator.gerarMonstroFacil(), proximoXMonstro, proximoYMonstro++);
+                for (int i = 0; i < 2; i++)
+                    campo.adicionarPersonagem(CharacterGenerator.gerarMonstroFacil(), proximoXMonstro, proximoYMonstro++);
                 break;
             case 3:
                 Logger.log("Dificuldade selecionada: Difícil.");
@@ -148,7 +147,8 @@ public class Game {
             case 2:
             default:
                 Logger.log("Dificuldade selecionada: Médio.");
-                for (int i = 0; i < 3; i++) campo.adicionarPersonagem(CharacterGenerator.gerarMonstroMedio(), proximoXMonstro, proximoYMonstro++);
+                for (int i = 0; i < 3; i++)
+                    campo.adicionarPersonagem(CharacterGenerator.gerarMonstroMedio(), proximoXMonstro, proximoYMonstro++);
                 break;
         }
         return campo;
@@ -190,7 +190,7 @@ public class Game {
         System.out.println("ARQUEIRO:");
         imprimirDevagar("Um caçador ágil e preciso, com alta velocidade e chance de acerto.", 15);
         System.out.printf(" > HP: %d | Força: %d | Resistência: %d | Destreza: %d | Velocidade: %d\n\n", CharacterAttributes.ARCHER_HP, CharacterAttributes.ARCHER_STRENGTH, CharacterAttributes.ARCHER_RESISTANCE, CharacterAttributes.ARCHER_DEXTERITY, CharacterAttributes.ARCHER_SPEED);
-        System.out.println("LADINO:");
+        System.out.println("STEALTH:"); // Alterado de "LADINO:" para "STEALTH:"
         imprimirDevagar("Rápido e mortal, combina força e destreza para ataques críticos devastadores.", 15);
         System.out.printf(" > HP: %d | Força: %d | Resistência: %d | Destreza: %d | Velocidade: %d\n", CharacterAttributes.STEALTH_HP, CharacterAttributes.STEALTH_STRENGTH, CharacterAttributes.STEALTH_RESISTANCE, CharacterAttributes.STEALTH_DEXTERITY, CharacterAttributes.STEALTH_SPEED);
         System.out.println("-----------------------------------------------------------------");
@@ -205,9 +205,7 @@ public class Game {
         System.out.println("2. Ataque Forte");
         System.out.println("3. Passar o turno");
         System.out.println("4. Desistir da Batalha");
-        System.out.print("Sua escolha: ");
-        int escolha = this.scanner.nextInt();
-        this.scanner.nextLine();
+        int escolha = lerEscolhaDoJogador(1, 4);
 
         switch (escolha) {
             case 1:
@@ -222,21 +220,14 @@ public class Game {
                     Monster monstro = monstrosVivos.get(i);
                     System.out.printf("%d. %s (HP: %d/%d)\n", i + 1, monstro.getName(), monstro.getHP(), monstro.getMaxHP());
                 }
-                System.out.print("Alvo: ");
-                int escolhaAlvo = this.scanner.nextInt();
-                this.scanner.nextLine();
-                if (escolhaAlvo > 0 && escolhaAlvo <= monstrosVivos.size()) {
-                    Monster alvo = monstrosVivos.get(escolhaAlvo - 1);
-                    AttackType tipoAtaque = (escolha == 1) ? AttackType.FRACO : AttackType.FORTE;
-                    heroi.realizarAtaque(alvo, tipoAtaque);
-                    if (alvo.getHP() <= 0) {
-                        Logger.log("!!! " + alvo.getName() + " foi derrotado! !!!");
-                        this.battlefield.removerPersonagem(alvo);
-                        this.turnManager.removeCharacter(alvo);
-                    }
-                } else {
-                    System.out.println("Escolha de alvo inválida. O herói perdeu o turno.");
-                    Logger.log(heroi.getName() + " se confundiu e perdeu o turno.");
+                int escolhaAlvo = lerEscolhaDoJogador(1, monstrosVivos.size());
+                Monster alvo = monstrosVivos.get(escolhaAlvo - 1);
+                AttackType tipoAtaque = (escolha == 1) ? AttackType.FRACO : AttackType.FORTE;
+                heroi.realizarAtaque(alvo, tipoAtaque);
+                if (alvo.getHP() <= 0) {
+                    Logger.log("!!! " + alvo.getName() + " foi derrotado! !!!");
+                    this.battlefield.removerPersonagem(alvo);
+                    this.turnManager.removeCharacter(alvo);
                 }
                 break;
             case 3:
@@ -247,10 +238,6 @@ public class Game {
                 System.out.println("Os heróis se retiram da batalha...");
                 Logger.log("Os heróis desistiram da batalha.");
                 this.battlefield.removerTodosHerois();
-                break;
-            default:
-                System.out.println("Opção inválida. O herói perdeu o turno.");
-                Logger.log(heroi.getName() + " se confundiu e perdeu o turno.");
                 break;
         }
     }
@@ -263,7 +250,6 @@ public class Game {
 
         List<Monster> monstrosVivos = this.battlefield.getMonsters();
         if (!monstrosVivos.isEmpty()) {
-            // Lógica para encontrar o alvo com menor HP (sem alteração)
             Monster alvo = monstrosVivos.get(0);
             int menorHP = alvo.getHP();
             for (Monster monstro : monstrosVivos) {
@@ -272,21 +258,16 @@ public class Game {
                     alvo = monstro;
                 }
             }
-
-            // --- NOVA LÓGICA DE DECISÃO DA IA ---
             AttackType ataqueEscolhidoPelaIA;
-            if (random.nextInt(100) < 40) { // 40% de chance
+            if (random.nextInt(100) < 40) {
                 ataqueEscolhidoPelaIA = AttackType.FORTE;
-            } else { // 60% de chance
+            } else {
                 ataqueEscolhidoPelaIA = AttackType.FRACO;
             }
-
             if (!"LOG_ONLY".equals(this.modoDeJogo)) {
                 System.out.printf("%s decide usar seu ataque %s em %s!\n", heroi.getName(), ataqueEscolhidoPelaIA, alvo.getName());
             }
-
             heroi.realizarAtaque(alvo, ataqueEscolhidoPelaIA);
-
             if (alvo.getHP() <= 0) {
                 Logger.log("!!! " + alvo.getName() + " foi derrotado! !!!");
                 this.battlefield.removerPersonagem(alvo);
@@ -297,7 +278,6 @@ public class Game {
         }
     }
 
-    // --- MÉTODO ATUALIZADO ---
     private void executarTurnoMonstro(Monster monstro) {
         if (!"LOG_ONLY".equals(this.modoDeJogo)) {
             String cabecalho = String.format("\n--- Turno de %s (%s | HP: %d/%d) ---", monstro.getName(), monstro.getType(), monstro.getHP(), monstro.getMaxHP());
@@ -306,7 +286,6 @@ public class Game {
 
         List<Hero> heroisVivos = this.battlefield.getHeroes();
         if (!heroisVivos.isEmpty()) {
-            // Lógica para encontrar o alvo com menor HP (sem alteração)
             Hero alvo = heroisVivos.get(0);
             int menorHP = alvo.getHP();
             for (Hero heroi : heroisVivos) {
@@ -315,15 +294,11 @@ public class Game {
                     alvo = heroi;
                 }
             }
-
-            AttackType ataqueEscolhidoPelaIA = AttackType.FRACO;
             if (!"LOG_ONLY".equals(this.modoDeJogo)) {
                 String acaoMonstro = String.format("%s foca seu ataque em %s!", monstro.getName(), alvo.getName());
                 imprimirDevagar(acaoMonstro, 30);
             }
-
-            monstro.realizarAtaque(alvo, ataqueEscolhidoPelaIA);
-
+            monstro.realizarAtaque(alvo, AttackType.FRACO);
             if (alvo.getHP() <= 0) {
                 Logger.log("!!! " + alvo.getName() + " foi derrotado! !!!");
                 this.battlefield.removerPersonagem(alvo);
@@ -344,5 +319,22 @@ public class Game {
             }
         }
         System.out.println();
+    }
+
+    private int lerEscolhaDoJogador(int min, int max) {
+        int escolha = -1;
+        while (escolha < min || escolha > max) {
+            System.out.print("Sua escolha: ");
+            try {
+                escolha = Integer.parseInt(scanner.nextLine());
+                if (escolha < min || escolha > max) {
+                    System.out.printf("Opção inválida. Por favor, digite um número entre %d e %d.\n", min, max);
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada inválida. Por favor, digite apenas um número.");
+                escolha = -1;
+            }
+        }
+        return escolha;
     }
 }

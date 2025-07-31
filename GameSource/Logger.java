@@ -7,15 +7,22 @@ public class Logger {
     private static final List<String> logs = new ArrayList<>();
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
+    private static boolean modoSilencioso = false;
+
     private Logger() {}
+
+    public static void setModoSilencioso(boolean silencioso) {
+        modoSilencioso = silencioso;
+    }
+
     public static void log(String message) {
-        System.out.println(message);
         String timestamp = LocalTime.now().format(timeFormatter);
         String logMessage = String.format("[%s] %s", timestamp, message);
 
+        if (!modoSilencioso) {
+            System.out.println(message);
+        }
         logs.add(logMessage);
-
-
     }
 
     public static void exibirLogs() {
@@ -29,7 +36,9 @@ public class Logger {
         }
         System.out.println("-----------------------------------");
     }
+
     public static void limparLogs() {
         logs.clear();
+        modoSilencioso = false;
     }
 }
