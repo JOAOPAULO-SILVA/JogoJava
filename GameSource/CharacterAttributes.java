@@ -24,8 +24,7 @@ public class CharacterAttributes {
     public static final int STEALTH_RESISTANCE = 5;
     public static final int STEALTH_DEXTERITY = 15;
 
-
-    //ATRIBUTOS DOS MONSTROS COM RANGE
+    // --- ATRIBUTOS DOS MONSTROS COM RANGE ---
 
     // ORC (Monstro fraco)
     public static final int ORC_HP_MIN = 30;
@@ -38,7 +37,6 @@ public class CharacterAttributes {
     public static final int ORC_RESISTANCE_MAX = 4;
     public static final int ORC_DEXTERITY_MIN = 7;
     public static final int ORC_DEXTERITY_MAX = 11;
-
 
     // WITCH (Monstro Médio)
     public static final int WITCH_HP_MIN = 90;
@@ -64,7 +62,7 @@ public class CharacterAttributes {
     public static final int DRAGON_DEXTERITY_MIN = 8;
     public static final int DRAGON_DEXTERITY_MAX = 12;
 
-
     private CharacterAttributes() {
+        // Construtor privado para impedir a instanciação
     }
 }

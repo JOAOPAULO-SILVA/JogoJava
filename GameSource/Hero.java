@@ -16,7 +16,6 @@ public class Hero extends Character {
         }
 
         this.setTipo(tipoHeroi);
-
         setAttributes();
     }
 
@@ -54,37 +53,60 @@ public class Hero extends Character {
     }
 
     @Override
-    public AttackResult realizarAtaque(Character alvo) {
-        int chanceAcertoBase;
-        int danoBase;
-        double multiplicadorCritico;
+    public AttackResult realizarAtaque(Character alvo, AttackType tipoAtaque) {
+        int chanceAcertoBase = 0;
+        int danoBase = 0;
+        double multiplicadorCritico = 1.5;
+        String nomeAtaque = "";
 
-        // Valores atualizados da última vez
+        // Lógica para definir o tipo de ataque (fraco vs forte)
         switch (this.tipo) {
             case PALADIN:
-                chanceAcertoBase = 85;
-                danoBase = this.getStrength();
-                multiplicadorCritico = 1.5;
+                if (tipoAtaque == AttackType.FORTE) {
+                    nomeAtaque = "Golpe Esmagador";
+                    chanceAcertoBase = 70;
+                    danoBase = (int) (this.getStrength() * 1.5);
+                } else {
+                    nomeAtaque = "Estocada Rápida";
+                    chanceAcertoBase = 85;
+                    danoBase = this.getStrength();
+                }
                 break;
             case WIZARD:
-                chanceAcertoBase = 70;
-                danoBase = this.getDexterity() * 2;
-                multiplicadorCritico = 1.8;
+                if (tipoAtaque == AttackType.FORTE) {
+                    nomeAtaque = "Bola de Fogo";
+                    chanceAcertoBase = 65;
+                    danoBase = (int) (this.getDexterity() * 2.5);
+                    multiplicadorCritico = 2.0;
+                } else {
+                    nomeAtaque = "Raio Místico";
+                    chanceAcertoBase = 75;
+                    danoBase = (int) (this.getDexterity() * 1.8);
+                }
                 break;
             case ARCHER:
-                chanceAcertoBase = 90;
-                danoBase = this.getStrength() + (this.getDexterity() / 2);
-                multiplicadorCritico = 2.0;
+                if (tipoAtaque == AttackType.FORTE) {
+                    nomeAtaque = "Tiro Preciso";
+                    chanceAcertoBase = 80;
+                    danoBase = this.getStrength() + this.getDexterity();
+                    multiplicadorCritico = 2.5;
+                } else {
+                    nomeAtaque = "Tiro Rápido";
+                    chanceAcertoBase = 90;
+                    danoBase = this.getStrength() + (this.getDexterity() / 2);
+                }
                 break;
             case STEALTH:
-                chanceAcertoBase = 80;
-                danoBase = this.getStrength() + this.getDexterity();
-                multiplicadorCritico = 2.0;
-                break;
-            default:
-                chanceAcertoBase = 70;
-                danoBase = this.getStrength();
-                multiplicadorCritico = 1.5;
+                if (tipoAtaque == AttackType.FORTE) {
+                    nomeAtaque = "Ataque Surpresa";
+                    chanceAcertoBase = 75;
+                    danoBase = this.getStrength() + this.getDexterity();
+                    multiplicadorCritico = 3.0;
+                } else {
+                    nomeAtaque = "Corte Veloz";
+                    chanceAcertoBase = 85;
+                    danoBase = this.getStrength() + (this.getDexterity() / 2);
+                }
                 break;
         }
 
@@ -94,51 +116,40 @@ public class Hero extends Character {
         int rolagem = random.nextInt(100) + 1;
 
         if (rolagem <= 5) {
-            String mensagem = String.format("%s errou o ataque criticamente contra %s!", this.getName(), alvo.getName());
-            Logger.log(mensagem);
+            Logger.log(String.format("%s usou %s, mas errou criticamente!", this.getName(), nomeAtaque));
             return AttackResult.ERROU;
-
-        } else if (rolagem > 95) { // ATAQUE CRÍTICO
+        } else if (rolagem > 95) {
             int danoCritico = (int) (danoBase * multiplicadorCritico);
             int danoAplicado = alvo.receberDano(danoCritico);
-
             if (danoAplicado == 0 && danoCritico > 0) {
-                String mensagem = String.format("CRITICAL HIT! %s investe com força total, mas %s bloqueia o golpe!",
-                        this.getName(), alvo.getName());
+                String mensagem = String.format("CRITICAL HIT! %s investe com força total, mas %s bloqueia o golpe! (Vida restante: %s %d/%d, %s %d/%d)",
+                        this.getName(), alvo.getName(), this.getName(), this.getHP(), this.getMaxHP(), alvo.getName(), alvo.getHP(), alvo.getMaxHP());
                 Logger.log(mensagem);
             } else {
-                String mensagem = String.format("CRITICAL HIT! %s causou %d de dano em %s. (Vida restante: %s %d/%d, %s %d/%d)",
-                        this.getName(), danoAplicado, alvo.getName(),
-                        this.getName(), this.getHP(), this.getMaxHP(),
-                        alvo.getName(), alvo.getHP(), alvo.getMaxHP()
-                );
+                String mensagem = String.format("CRITICAL HIT! Com %s, %s causou %d de dano em %s. (Vida restante: %s %d/%d, %s %d/%d)",
+                        nomeAtaque, this.getName(), danoAplicado, alvo.getName(), this.getName(), this.getHP(), this.getMaxHP(), alvo.getName(), alvo.getHP(), alvo.getMaxHP());
                 Logger.log(mensagem);
             }
             return AttackResult.CRITICAL_HIT;
-
-        } else if (rolagem <= chanceFinalAcerto) { // ATAQUE NORMAL
+        } else if (rolagem <= chanceFinalAcerto) {
             int danoAplicado = alvo.receberDano(danoBase);
-
             if (danoAplicado == 0 && danoBase > 0) {
-                String mensagem = String.format("%s ataca %s, mas sua defesa absorve todo o impacto!",
-                        this.getName(), alvo.getName());
+                String mensagem = String.format("%s usa %s, mas a defesa de %s absorve o impacto! (Vida restante: %s %d/%d, %s %d/%d)",
+                        this.getName(), nomeAtaque, alvo.getName(), this.getName(), this.getHP(), this.getMaxHP(), alvo.getName(), alvo.getHP(), alvo.getMaxHP());
                 Logger.log(mensagem);
             } else {
-                String mensagem = String.format("%s acertou %s, causando %d de dano. (Vida restante: %s %d/%d, %s %d/%d)",
-                        this.getName(), alvo.getName(), danoAplicado,
-                        this.getName(), this.getHP(), this.getMaxHP(),
-                        alvo.getName(), alvo.getHP(), alvo.getMaxHP()
-                );
+                String mensagem = String.format("%s usou %s e causou %d de dano em %s. (Vida restante: %s %d/%d, %s %d/%d)",
+                        this.getName(), nomeAtaque, danoAplicado, alvo.getName(), this.getName(), this.getHP(), this.getMaxHP(), alvo.getName(), alvo.getHP(), alvo.getMaxHP());
                 Logger.log(mensagem);
             }
             return AttackResult.ACERTOU;
-
-        } else { // ERRO
-            String mensagem = String.format("%s errou o ataque contra %s.", this.getName(), alvo.getName());
-            Logger.log(mensagem);
+        } else {
+            Logger.log(String.format("%s usou %s, mas errou o ataque.", this.getName(), nomeAtaque));
             return AttackResult.ERROU;
         }
     }
+
+    @Override
     public String toString() {
         return String.format("%s %s\n  HP: %d\n  Defesa: %d\n  Força: %d\n  Destreza: %d\n  Velocidade: %d",
                 tipo.toString(), getName(), getHP(), getResistance(), getStrength(), getDexterity(), getSpeed());

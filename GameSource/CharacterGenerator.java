@@ -46,19 +46,23 @@ public class CharacterGenerator {
         return new Monster(nomeEscolhido, tipoEscolhido.toString());
     }
 
-    private static String getUniqueName(String[] Nomes) {
+    private static String getUniqueName(String[] poolDeNomes) {
+        long nomesDisponiveisNoPool = 0;
+        for(String nome : poolDeNomes) {
+            if(!nomesUsados.contains(nome)){
+                nomesDisponiveisNoPool++;
+            }
+        }
 
-        if (nomesUsados.size() >= Nomes.length) {
+        if (nomesDisponiveisNoPool == 0) {
             return "Inimigo #" + defaultCounter++;
         }
 
         String nomeEscolhido;
-        // Fica em loop até encontrar um nome que não esteja na lista de "nomesUsados"
         do {
-            nomeEscolhido = Nomes[random.nextInt(Nomes.length)];
+            nomeEscolhido = poolDeNomes[random.nextInt(poolDeNomes.length)];
         } while (nomesUsados.contains(nomeEscolhido));
 
-        // Adiciona o nome encontrado à lista de usados e o retorna
         nomesUsados.add(nomeEscolhido);
         return nomeEscolhido;
     }

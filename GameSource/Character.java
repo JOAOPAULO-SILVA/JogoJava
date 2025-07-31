@@ -7,7 +7,6 @@ public abstract class Character {
     protected int dexterity;
     protected CharacterType tipo;
     protected int maxHP;
-
     private int posX;
     private int posY;
 
@@ -47,7 +46,6 @@ public abstract class Character {
     public int getPosX() { return posX; }
     public int getPosY() { return posY; }
     public CharacterType getType() { return tipo; }
-
     //Setters
     public void setPosX(int posX) { this.posX = posX; }
     public void setPosY(int posY) { this.posY = posY; }
@@ -56,7 +54,7 @@ public abstract class Character {
     public void setResistance(int resistance) { this.resistance = resistance; }
     public void setDexterity(int dexterity) { this.dexterity = dexterity; }
 
-    public abstract AttackResult realizarAtaque(Character alvo);
+    public abstract AttackResult realizarAtaque(Character alvo, AttackType tipoAtaque);
 
     public int receberDano(int dano) {
         int danoReal = Math.max(0, dano - this.resistance);

@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
@@ -7,7 +8,7 @@ public class Game {
     private final TurnManager turnManager;
     private final Scanner scanner;
     private final Random random = new Random();
-    private String modoDeJogo; // Guarda o modo escolhido
+    private String modoDeJogo;
 
     public Game() {
         Logger.limparLogs();
@@ -19,11 +20,15 @@ public class Game {
 
     public void iniciar() {
         Logger.log("A Batalha Começou!");
-        System.out.println();
-        imprimirDevagar("======= A BATALHA COMEÇOU! =======", 30);
+        if (!"LOG_ONLY".equals(this.modoDeJogo)) {
+            System.out.println();
+            imprimirDevagar("======= A BATALHA COMEÇOU! =======", 30);
+        }
 
         while (!turnManager.isBattleOver()) {
-            battlefield.exibirTabuleiro();
+            if (!"LOG_ONLY".equals(this.modoDeJogo)) {
+                battlefield.exibirTabuleiro();
+            }
             Character personagemAtual = turnManager.getCurrentCharacter();
 
             if (personagemAtual.getHP() <= 0) {
@@ -33,13 +38,11 @@ public class Game {
 
             if (personagemAtual instanceof Hero) {
                 if ("INTERATIVO".equals(this.modoDeJogo)) {
-                    // Chama o método de objeto (não-static)
                     executarTurnoHeroi((Hero) personagemAtual);
-                } else { // MODO AUTOMÁTICO
+                } else { // MODO AUTOMÁTICO ou LOG_ONLY
                     executarTurnoHeroiAI((Hero) personagemAtual);
                 }
             } else if (personagemAtual instanceof Monster) {
-                // Chama o método de objeto (não-static)
                 executarTurnoMonstro((Monster) personagemAtual);
             }
 
@@ -50,35 +53,79 @@ public class Game {
             if ("INTERATIVO".equals(this.modoDeJogo)) {
                 System.out.println("\nPressione Enter para continuar...");
                 scanner.nextLine();
-            } else {
-                try { Thread.sleep(1500); } catch (InterruptedException e) {
+            } else if ("AUTOMATICO".equals(this.modoDeJogo)) {
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
             }
+            // No modo LOG_ONLY, não há pausa
+
             turnManager.nextTurn();
         }
         finalizarBatalha();
     }
 
     private Battlefield configurarBatalha() {
-        final int LARGURA_CAMPO = 10;
+        final int LARGURA_CAMPO = 5;
         final int ALTURA_CAMPO = 5;
-        final int NUMERO_DE_HEROIS = 2;
         Battlefield campo = new Battlefield(LARGURA_CAMPO, ALTURA_CAMPO);
-
-        for (int i = 0; i < NUMERO_DE_HEROIS; i++) {
-            // Chama o método de objeto (não-static)
-            posicionarAleatoriamente(CharacterGenerator.gerarHeroiAleatorio(), campo, LARGURA_CAMPO, ALTURA_CAMPO);
-        }
 
         imprimirDevagar("Escolha o modo de jogo:", 30);
         System.out.println("1. Interativo (Você controla os heróis)");
-        System.out.println("2. Simulação Automática (IA vs IA)");
+        System.out.println("2. Simulação Automática (IA vs IA com turnos visuais)");
+        System.out.println("3. Simulação Rápida (Apenas o resultado final no log)");
         System.out.print("Sua escolha: ");
         int escolhaModo = scanner.nextInt();
         scanner.nextLine();
-        this.modoDeJogo = (escolhaModo == 2) ? "AUTOMATICO" : "INTERATIVO";
-        Logger.log("Modo de jogo selecionado: " + this.modoDeJogo);
+
+        int proximoXHeroi = 1;
+        int proximoYHeroi = 1;
+        int proximoXMonstro = LARGURA_CAMPO - 2;
+        int proximoYMonstro = 1;
+
+        if (escolhaModo == 1) {
+            this.modoDeJogo = "INTERATIVO";
+            Logger.log("Modo de jogo selecionado: JOGADOR VS IA");
+            exibirInformacoesPersonagens();
+
+            System.out.println("\nEscolha sua classe de Herói:");
+            System.out.println("1. Paladino");
+            System.out.println("2. Mago");
+            System.out.println("3. Arqueiro");
+            System.out.println("4. Ladino");
+            System.out.print("Sua escolha: ");
+            int escolhaClasse = scanner.nextInt();
+            scanner.nextLine();
+
+            String tipoHeroi;
+            switch (escolhaClasse) {
+                case 2: tipoHeroi = "WIZARD"; break;
+                case 3: tipoHeroi = "ARCHER"; break;
+                case 4: tipoHeroi = "STEALTH"; break;
+                case 1:
+                default: tipoHeroi = "PALADIN"; break;
+            }
+            System.out.print("Digite o nome do seu Herói: ");
+            String nomeHeroi = scanner.nextLine();
+            Hero heroiEscolhido = new Hero(nomeHeroi, tipoHeroi);
+            campo.adicionarPersonagem(heroiEscolhido, proximoXHeroi, proximoYHeroi++);
+        } else if (escolhaModo == 3) {
+            this.modoDeJogo = "LOG_ONLY";
+            Logger.log("Modo de jogo selecionado: " + this.modoDeJogo);
+            for (int i = 0; i < 2; i++) {
+                Hero heroi = CharacterGenerator.gerarHeroiAleatorio();
+                campo.adicionarPersonagem(heroi, proximoXHeroi, proximoYHeroi++);
+            }
+        } else {
+            this.modoDeJogo = "AUTOMATICO";
+            Logger.log("Modo de jogo selecionado: EQUIPE INTERATIVA");
+            for (int i = 0; i < 2; i++) {
+                Hero heroi = CharacterGenerator.gerarHeroiAleatorio();
+                campo.adicionarPersonagem(heroi, proximoXHeroi, proximoYHeroi++);
+            }
+        }
 
         imprimirDevagar("Escolha a dificuldade:", 30);
         System.out.println("1. Fácil");
@@ -87,60 +134,89 @@ public class Game {
         System.out.print("Sua escolha: ");
         int escolhaDif = scanner.nextInt();
         scanner.nextLine();
+
         switch (escolhaDif) {
             case 1:
                 Logger.log("Dificuldade selecionada: Fácil.");
-                for (int i = 0; i < 3; i++) posicionarAleatoriamente(CharacterGenerator.gerarMonstroFacil(), campo, LARGURA_CAMPO, ALTURA_CAMPO);
+                for (int i = 0; i < 2; i++) campo.adicionarPersonagem(CharacterGenerator.gerarMonstroFacil(), proximoXMonstro, proximoYMonstro++);
                 break;
             case 3:
                 Logger.log("Dificuldade selecionada: Difícil.");
-                for (int i = 0; i < 2; i++) posicionarAleatoriamente(CharacterGenerator.gerarMonstroMedio(), campo, LARGURA_CAMPO, ALTURA_CAMPO);
-                posicionarAleatoriamente(CharacterGenerator.gerarMonstroDificil(), campo, LARGURA_CAMPO, ALTURA_CAMPO);
+                campo.adicionarPersonagem(CharacterGenerator.gerarMonstroMedio(), proximoXMonstro, proximoYMonstro++);
+                campo.adicionarPersonagem(CharacterGenerator.gerarMonstroDificil(), proximoXMonstro, proximoYMonstro++);
                 break;
             case 2:
             default:
                 Logger.log("Dificuldade selecionada: Médio.");
-                for (int i = 0; i < 3; i++) posicionarAleatoriamente(CharacterGenerator.gerarMonstroMedio(), campo, LARGURA_CAMPO, ALTURA_CAMPO);
+                for (int i = 0; i < 3; i++) campo.adicionarPersonagem(CharacterGenerator.gerarMonstroMedio(), proximoXMonstro, proximoYMonstro++);
                 break;
         }
         return campo;
     }
 
     private void finalizarBatalha() {
-        System.out.println();
-        imprimirDevagar("======= A BATALHA TERMINOU! =======", 30);
-
-        if (battlefield.getNumeroDeHerois() > 0) {
-            Logger.log("Os Heróis venceram a batalha!");
-            imprimirDevagar("OS HERÓIS VENCERAM!", 100);
+        if (!"LOG_ONLY".equals(this.modoDeJogo)) {
+            System.out.println();
+            imprimirDevagar("======= A BATALHA TERMINOU! =======", 30);
+            if (battlefield.getNumeroDeHerois() > 0) {
+                Logger.log("Os Heróis venceram a batalha!");
+                imprimirDevagar("OS HERÓIS VENCERAM!", 100);
+            } else {
+                Logger.log("Os Monstros venceram a batalha!");
+                imprimirDevagar("OS MONSTROS VENCERAM!", 100);
+            }
+            battlefield.exibirTabuleiro();
         } else {
-            Logger.log("Os Monstros venceram a batalha!");
-            imprimirDevagar("OS MONSTROS VENCERAM!", 100);
+            if (battlefield.getNumeroDeHerois() > 0) {
+                Logger.log("Os Heróis venceram a batalha!");
+            } else {
+                Logger.log("Os Monstros venceram a batalha!");
+            }
+            System.out.println("\nSimulação Rápida concluída. Verifique o log de eventos abaixo.");
         }
-
-        battlefield.exibirTabuleiro();
         Logger.exibirLogs();
         scanner.close();
     }
 
-    // --- MÉTODOS AUXILIARES CORRIGIDOS (NÃO SÃO MAIS STATIC) ---
+    private void exibirInformacoesPersonagens() {
+        imprimirDevagar("\n--- CLASSES DE HERÓIS DISPONÍVEIS ---", 20);
+        System.out.println("-----------------------------------------------------------------");
+        System.out.println("PALADINO:");
+        imprimirDevagar("Um guerreiro sagrado com alta resistência e força. Perfeito para a linha de frente.", 15);
+        System.out.printf(" > HP: %d | Força: %d | Resistência: %d | Destreza: %d | Velocidade: %d\n\n", CharacterAttributes.PALADIN_HP, CharacterAttributes.PALADIN_STRENGTH, CharacterAttributes.PALADIN_RESISTANCE, CharacterAttributes.PALADIN_DEXTERITY, CharacterAttributes.PALADIN_SPEED);
+        System.out.println("MAGO:");
+        imprimirDevagar("Um mestre das artes arcanas que usa sua destreza para causar dano massivo.", 15);
+        System.out.printf(" > HP: %d | Força: %d | Resistência: %d | Destreza: %d | Velocidade: %d\n\n", CharacterAttributes.WIZARD_HP, CharacterAttributes.WIZARD_STRENGTH, CharacterAttributes.WIZARD_RESISTANCE, CharacterAttributes.WIZARD_DEXTERITY, CharacterAttributes.WIZARD_SPEED);
+        System.out.println("ARQUEIRO:");
+        imprimirDevagar("Um caçador ágil e preciso, com alta velocidade e chance de acerto.", 15);
+        System.out.printf(" > HP: %d | Força: %d | Resistência: %d | Destreza: %d | Velocidade: %d\n\n", CharacterAttributes.ARCHER_HP, CharacterAttributes.ARCHER_STRENGTH, CharacterAttributes.ARCHER_RESISTANCE, CharacterAttributes.ARCHER_DEXTERITY, CharacterAttributes.ARCHER_SPEED);
+        System.out.println("LADINO:");
+        imprimirDevagar("Rápido e mortal, combina força e destreza para ataques críticos devastadores.", 15);
+        System.out.printf(" > HP: %d | Força: %d | Resistência: %d | Destreza: %d | Velocidade: %d\n", CharacterAttributes.STEALTH_HP, CharacterAttributes.STEALTH_STRENGTH, CharacterAttributes.STEALTH_RESISTANCE, CharacterAttributes.STEALTH_DEXTERITY, CharacterAttributes.STEALTH_SPEED);
+        System.out.println("-----------------------------------------------------------------");
+    }
 
     private void executarTurnoHeroi(Hero heroi) {
         String cabecalho = String.format("\n--- Turno de %s (%s | HP: %d/%d) ---", heroi.getName(), heroi.getType(), heroi.getHP(), heroi.getMaxHP());
         imprimirDevagar(cabecalho, 20);
 
         System.out.println("O que você quer fazer?");
-        System.out.println("1. Atacar");
-        System.out.println("2. Mover");
+        System.out.println("1. Ataque Fraco");
+        System.out.println("2. Ataque Forte");
         System.out.println("3. Passar o turno");
+        System.out.println("4. Desistir da Batalha");
         System.out.print("Sua escolha: ");
         int escolha = this.scanner.nextInt();
         this.scanner.nextLine();
 
         switch (escolha) {
             case 1:
+            case 2:
                 List<Monster> monstrosVivos = this.battlefield.getMonsters();
-                if (monstrosVivos.isEmpty()) { System.out.println("Não há alvos para atacar!"); break; }
+                if (monstrosVivos.isEmpty()) {
+                    System.out.println("Não há alvos para atacar!");
+                    break;
+                }
                 System.out.println("Escolha um alvo:");
                 for (int i = 0; i < monstrosVivos.size(); i++) {
                     Monster monstro = monstrosVivos.get(i);
@@ -151,30 +227,26 @@ public class Game {
                 this.scanner.nextLine();
                 if (escolhaAlvo > 0 && escolhaAlvo <= monstrosVivos.size()) {
                     Monster alvo = monstrosVivos.get(escolhaAlvo - 1);
-                    heroi.realizarAtaque(alvo);
+                    AttackType tipoAtaque = (escolha == 1) ? AttackType.FRACO : AttackType.FORTE;
+                    heroi.realizarAtaque(alvo, tipoAtaque);
                     if (alvo.getHP() <= 0) {
                         Logger.log("!!! " + alvo.getName() + " foi derrotado! !!!");
                         this.battlefield.removerPersonagem(alvo);
                         this.turnManager.removeCharacter(alvo);
                     }
                 } else {
-                    System.out.println("Escolha de alvo inválida.");
-                    Logger.log(heroi.getName() + " perdeu o turno.");
-                }
-                break;
-            case 2:
-                System.out.println("Digite as coordenadas para mover (X Y):");
-                System.out.print("Coordenadas: ");
-                int novoX = this.scanner.nextInt();
-                int novoY = this.scanner.nextInt();
-                this.scanner.nextLine();
-                if (!this.battlefield.moverPersonagem(heroi, novoX, novoY)) {
-                    Logger.log(heroi.getName() + " tentou se mover, mas falhou.");
+                    System.out.println("Escolha de alvo inválida. O herói perdeu o turno.");
+                    Logger.log(heroi.getName() + " se confundiu e perdeu o turno.");
                 }
                 break;
             case 3:
                 System.out.println(heroi.getName() + " está esperando...");
                 Logger.log(heroi.getName() + " esperou e passou o turno.");
+                break;
+            case 4:
+                System.out.println("Os heróis se retiram da batalha...");
+                Logger.log("Os heróis desistiram da batalha.");
+                this.battlefield.removerTodosHerois();
                 break;
             default:
                 System.out.println("Opção inválida. O herói perdeu o turno.");
@@ -184,10 +256,14 @@ public class Game {
     }
 
     private void executarTurnoHeroiAI(Hero heroi) {
-        String cabecalho = String.format("\n--- Turno de %s (%s | HP: %d/%d) ---", heroi.getName(), heroi.getType(), heroi.getHP(), heroi.getMaxHP());
-        System.out.println(cabecalho);
+        if (!"LOG_ONLY".equals(this.modoDeJogo)) {
+            String cabecalho = String.format("\n--- Turno de %s (%s | HP: %d/%d) ---", heroi.getName(), heroi.getType(), heroi.getHP(), heroi.getMaxHP());
+            System.out.println(cabecalho);
+        }
+
         List<Monster> monstrosVivos = this.battlefield.getMonsters();
         if (!monstrosVivos.isEmpty()) {
+            // Lógica para encontrar o alvo com menor HP (sem alteração)
             Monster alvo = monstrosVivos.get(0);
             int menorHP = alvo.getHP();
             for (Monster monstro : monstrosVivos) {
@@ -196,8 +272,21 @@ public class Game {
                     alvo = monstro;
                 }
             }
-            System.out.printf("%s decide atacar %s!\n", heroi.getName(), alvo.getName());
-            heroi.realizarAtaque(alvo);
+
+            // --- NOVA LÓGICA DE DECISÃO DA IA ---
+            AttackType ataqueEscolhidoPelaIA;
+            if (random.nextInt(100) < 40) { // 40% de chance
+                ataqueEscolhidoPelaIA = AttackType.FORTE;
+            } else { // 60% de chance
+                ataqueEscolhidoPelaIA = AttackType.FRACO;
+            }
+
+            if (!"LOG_ONLY".equals(this.modoDeJogo)) {
+                System.out.printf("%s decide usar seu ataque %s em %s!\n", heroi.getName(), ataqueEscolhidoPelaIA, alvo.getName());
+            }
+
+            heroi.realizarAtaque(alvo, ataqueEscolhidoPelaIA);
+
             if (alvo.getHP() <= 0) {
                 Logger.log("!!! " + alvo.getName() + " foi derrotado! !!!");
                 this.battlefield.removerPersonagem(alvo);
@@ -208,32 +297,40 @@ public class Game {
         }
     }
 
+    // --- MÉTODO ATUALIZADO ---
     private void executarTurnoMonstro(Monster monstro) {
-        String cabecalho = String.format("\n--- Turno de %s (%s | HP: %d/%d) ---", monstro.getName(), monstro.getType(), monstro.getHP(), monstro.getMaxHP());
-        imprimirDevagar(cabecalho, 20);
+        if (!"LOG_ONLY".equals(this.modoDeJogo)) {
+            String cabecalho = String.format("\n--- Turno de %s (%s | HP: %d/%d) ---", monstro.getName(), monstro.getType(), monstro.getHP(), monstro.getMaxHP());
+            imprimirDevagar(cabecalho, 20);
+        }
 
         List<Hero> heroisVivos = this.battlefield.getHeroes();
         if (!heroisVivos.isEmpty()) {
-            Hero alvo = heroisVivos.get(random.nextInt(heroisVivos.size()));
-            String acaoMonstro = String.format("%s decide atacar %s!", monstro.getName(), alvo.getName());
-            imprimirDevagar(acaoMonstro, 30);
-            monstro.realizarAtaque(alvo);
+            // Lógica para encontrar o alvo com menor HP (sem alteração)
+            Hero alvo = heroisVivos.get(0);
+            int menorHP = alvo.getHP();
+            for (Hero heroi : heroisVivos) {
+                if (heroi.getHP() < menorHP) {
+                    menorHP = heroi.getHP();
+                    alvo = heroi;
+                }
+            }
+
+            AttackType ataqueEscolhidoPelaIA = AttackType.FRACO;
+            if (!"LOG_ONLY".equals(this.modoDeJogo)) {
+                String acaoMonstro = String.format("%s foca seu ataque em %s!", monstro.getName(), alvo.getName());
+                imprimirDevagar(acaoMonstro, 30);
+            }
+
+            monstro.realizarAtaque(alvo, ataqueEscolhidoPelaIA);
+
             if (alvo.getHP() <= 0) {
                 Logger.log("!!! " + alvo.getName() + " foi derrotado! !!!");
                 this.battlefield.removerPersonagem(alvo);
                 this.turnManager.removeCharacter(alvo);
             }
         } else {
-            Logger.log(monstro.getName() + " não tem alvos para atacar.");
-        }
-    }
-
-    private void posicionarAleatoriamente(Character p, Battlefield campo, int largura, int altura) {
-        boolean posicionado = false;
-        while (!posicionado) {
-            int x = random.nextInt(largura);
-            int y = random.nextInt(altura);
-            posicionado = campo.adicionarPersonagem(p, x, y);
+            Logger.log(monstro.getName() + " não tem ninguém para atacar.");
         }
     }
 

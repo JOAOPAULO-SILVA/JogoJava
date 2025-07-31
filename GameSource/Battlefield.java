@@ -6,7 +6,6 @@ public class Battlefield {
     private final int largura;
     private final int altura;
 
-    //Lista para saber quantidade de personagens
     private final List<Hero> heroes;
     private final List<Monster> monsters;
 
@@ -14,18 +13,15 @@ public class Battlefield {
         this.largura = largura;
         this.altura = altura;
         this.board = new Character[altura][largura];
-
         this.heroes = new ArrayList<>();
         this.monsters = new ArrayList<>();
     }
 
     public boolean adicionarPersonagem(Character personagem, int x, int y) {
         if (x < 0 || x >= largura || y < 0 || y >= altura) {
-            System.err.printf("Erro: Posição (%d,%d) está fora do tabuleiro.%n", x, y);
             return false;
         }
         if (board[y][x] != null) {
-            System.err.printf("Erro: Posição (%d,%d) já está ocupada.%n", x, y);
             return false;
         }
 
@@ -59,30 +55,6 @@ public class Battlefield {
         }
     }
 
-    public boolean moverPersonagem(Character personagem, int novoX, int novoY) {
-        if (novoX < 0 || novoX >= largura || novoY < 0 || novoY >= altura) {
-            System.out.println("Movimento inválido: Fora do tabuleiro.");
-            return false;
-        }
-        if (board[novoY][novoX] != null) {
-            System.out.println("Movimento inválido: A posição já está ocupada.");
-            return false;
-        }
-
-        int antigoX = personagem.getPosX();
-        int antigoY = personagem.getPosY();
-
-        board[novoY][novoX] = personagem;
-        personagem.setPosX(novoY);
-        personagem.setPosY(novoY);
-
-        board[antigoY][antigoX] = null;
-
-        Logger.log(String.format("%s moveu-se de (%d,%d) para (%d,%d).", personagem.getName(), antigoX, antigoY, novoX, novoY));
-        return true;
-    }
-
-
     public void exibirTabuleiro() {
         System.out.println("\n--- CAMPO DE BATALHA ---");
         for (int y = 0; y < altura; y++) {
@@ -91,7 +63,7 @@ public class Battlefield {
                     System.out.print("[ . ]");
                 } else {
                     char inicial = board[y][x].getName().charAt(0);
-                    System.out.printf("[ %c ]",inicial);
+                    System.out.printf("[ %c ]", inicial);
                 }
             }
             System.out.println();
@@ -107,7 +79,7 @@ public class Battlefield {
                         hero.getName().charAt(0),
                         hero.getName(),
                         hero.getHP(),
-                        hero.getMaxHP()); // Mostra o HP atual e o máximo
+                        hero.getMaxHP());
             }
         }
 
@@ -116,26 +88,35 @@ public class Battlefield {
             System.out.println("  Nenhum monstro em campo.");
         } else {
             for (Monster monstro : monsters) {
-                System.out.printf("  [%c] %s (HP: %d)\n",
+                System.out.printf("  [%c] %s (HP: %d/%d)\n",
                         monstro.getName().charAt(0),
                         monstro.getName(),
-                        monstro.getHP());
+                        monstro.getHP(),
+                        monstro.getMaxHP());
             }
         }
         System.out.println("-------------------------");
+    }
+    public void removerTodosHerois() {
+        List<Hero> heroisParaRemover = new ArrayList<>(this.heroes);
+        for (Hero heroi : heroisParaRemover) {
+            removerPersonagem(heroi);
+        }
     }
 
     public List<Hero> getHeroes() {
         return this.heroes;
     }
+
     public int getNumeroDeHerois() {
         return this.heroes.size();
     }
+
     public List<Monster> getMonsters() {
         return this.monsters;
     }
+
     public int getNumeroDeMonstros() {
         return this.monsters.size();
     }
-
 }

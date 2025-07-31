@@ -15,7 +15,6 @@ public class Monster extends Character {
         }
 
         this.setTipo(tipoMonstro);
-
         setAttributes();
     }
 
@@ -53,15 +52,17 @@ public class Monster extends Character {
     }
 
     @Override
-    public AttackResult realizarAtaque(Character alvo) {
+    public AttackResult realizarAtaque(Character alvo, AttackType tipoAtaque) {
         int danoBase = this.getStrength();
         int danoAplicado = alvo.receberDano(danoBase);
 
         String mensagem;
         if (danoAplicado == 0 && danoBase > 0) {
-            mensagem = String.format("%s ataca %s, mas sua defesa absorve todo o impacto!",
+            mensagem = String.format("%s ataca %s, mas sua defesa absorve todo o impacto! (Vida restante: %s %d/%d, %s %d/%d)",
                     this.getName(),
-                    alvo.getName()
+                    alvo.getName(),
+                    this.getName(), this.getHP(), this.getMaxHP(),
+                    alvo.getName(), alvo.getHP(), alvo.getMaxHP()
             );
         } else {
             mensagem = String.format("%s atacou %s, causando %d de dano! (Vida restante: %s %d/%d, %s %d/%d)",
