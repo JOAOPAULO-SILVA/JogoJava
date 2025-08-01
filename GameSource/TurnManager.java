@@ -12,12 +12,13 @@ public class TurnManager {
         this.currentTurnIndex = 0;
         initializeTurnOrder();
     }
-
+    //metodo que define a ordem de ataque baseada na velocidade
     private void initializeTurnOrder() {
         this.turnOrder = new ArrayList<>();
         turnOrder.addAll(battlefield.getHeroes());
         turnOrder.addAll(battlefield.getMonsters());
 
+        //bubble sort baseado no atributo velocidade
         int size = turnOrder.size();
         for (int i = 0; i < size - 1; i++) {
             for (int j = 0; j < size - i - 1; j++) {

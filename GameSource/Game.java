@@ -18,6 +18,11 @@ public class Game {
         this.turnManager = new TurnManager(this.battlefield);
     }
 
+    /**
+     * Inicia o loop principal do jogo, que continua enquanto a batalha não tiver um vencedor.
+     * Gerencia a exibição do tabuleiro, a execução dos turnos de heróis e monstros (seja por IA ou por jogador)
+     * e o avanço para o próximo turno. O metodo finaliza a batalha quando um dos lados é derrotado.
+     */
     public void iniciar() {
         Logger.log("A Batalha Começou!");
         if (!"LOG_ONLY".equals(this.modoDeJogo)) {
@@ -65,6 +70,12 @@ public class Game {
         finalizarBatalha();
     }
 
+    /**
+     * Prepara o campo de batalha no início do jogo.
+     * Permite ao jogador escolher o modo de jogo (interativo, automático ou rápido) e a dificuldade,
+     * e então inicializa os heróis e monstros no tabuleiro de acordo com as escolhas.
+     * retorna O objeto Battlefield configurado com os personagens e o tamanho do campo.
+     */
     private Battlefield configurarBatalha() {
         final int LARGURA_CAMPO = 5;
         final int ALTURA_CAMPO = 5;
@@ -83,35 +94,32 @@ public class Game {
 
         if (escolhaModo == 1) {
             this.modoDeJogo = "INTERATIVO";
-            Logger.log("Modo de jogo selecionado: JOGADOR VS IA");
-            exibirInformacoesPersonagens();
+            Logger.log("Modo de jogo selecionado: JOGADOR VS CPU");
+            imprimirDevagar("\nVocê quer controlar 1 ou 2 heróis?", 30);
+            int numHerois = lerEscolhaDoJogador(1, 2);
 
-            System.out.println("\nEscolha sua classe de Herói:");
-            System.out.println("1. Paladino");
-            System.out.println("2. Mago");
-            System.out.println("3. Arqueiro");
-            System.out.println("4. Stealth"); // Alterado de "Ladino" para "Stealth"
-            int escolhaClasse = lerEscolhaDoJogador(1, 4);
-            String tipoHeroi;
-            switch (escolhaClasse) {
-                case 2:
-                    tipoHeroi = "WIZARD";
-                    break;
-                case 3:
-                    tipoHeroi = "ARCHER";
-                    break;
-                case 4:
-                    tipoHeroi = "STEALTH";
-                    break;
-                case 1:
-                default:
-                    tipoHeroi = "PALADIN";
-                    break;
+            exibirInformacoesPersonagens();
+            for (int i = 0; i < numHerois; i++) {
+                System.out.printf("\n--- Escolha do Herói %d ---\n", i + 1);
+                System.out.println("Escolha sua classe de Herói:");
+                System.out.println("1. Paladino");
+                System.out.println("2. Mago");
+                System.out.println("3. Arqueiro");
+                System.out.println("4. Stealth");
+                int escolhaClasse = lerEscolhaDoJogador(1, 4);
+                String tipoHeroi;
+                switch (escolhaClasse) {
+                    case 2: tipoHeroi = "WIZARD"; break;
+                    case 3: tipoHeroi = "ARCHER"; break;
+                    case 4: tipoHeroi = "STEALTH"; break;
+                    case 1:
+                    default: tipoHeroi = "PALADIN"; break;
+                }
+                System.out.printf("Digite o nome do seu Herói %d: ", i + 1);
+                String nomeHeroi = scanner.nextLine();
+                Hero heroiEscolhido = new Hero(nomeHeroi, tipoHeroi);
+                campo.adicionarPersonagem(heroiEscolhido, proximoXHeroi, proximoYHeroi++);
             }
-            System.out.print("Digite o nome do seu Herói: ");
-            String nomeHeroi = scanner.nextLine();
-            Hero heroiEscolhido = new Hero(nomeHeroi, tipoHeroi);
-            campo.adicionarPersonagem(heroiEscolhido, proximoXHeroi, proximoYHeroi++);
         } else if (escolhaModo == 3) {
             this.modoDeJogo = "LOG_ONLY";
             Logger.log("Modo de jogo selecionado: " + this.modoDeJogo);
@@ -153,17 +161,19 @@ public class Game {
         }
         return campo;
     }
-
+    /* Metodo responsalvel por finalizar a batalham imprimindo se os herois ou vilões venceram
+       E por mostrar os logs ao final da partida
+    * */
     private void finalizarBatalha() {
         if (!"LOG_ONLY".equals(this.modoDeJogo)) {
             System.out.println();
             imprimirDevagar("======= A BATALHA TERMINOU! =======", 30);
             if (battlefield.getNumeroDeHerois() > 0) {
                 Logger.log("Os Heróis venceram a batalha!");
-                imprimirDevagar("OS HERÓIS VENCERAM!", 100);
+                imprimirDevagar("OS HERÓIS DERROTARAM TODOS OS MONSTROS E VENCERAM!", 100);
             } else {
                 Logger.log("Os Monstros venceram a batalha!");
-                imprimirDevagar("OS MONSTROS VENCERAM!", 100);
+                imprimirDevagar("OS MONSTROS FORAM MAIS FORTES E VENCERAM!", 100);
             }
             battlefield.exibirTabuleiro();
         } else {
@@ -177,7 +187,7 @@ public class Game {
         Logger.exibirLogs();
         scanner.close();
     }
-
+    //Exibe as informações dos personagems no incio da partida
     private void exibirInformacoesPersonagens() {
         imprimirDevagar("\n--- CLASSES DE HERÓIS DISPONÍVEIS ---", 20);
         System.out.println("-----------------------------------------------------------------");
@@ -190,12 +200,13 @@ public class Game {
         System.out.println("ARQUEIRO:");
         imprimirDevagar("Um caçador ágil e preciso, com alta velocidade e chance de acerto.", 15);
         System.out.printf(" > HP: %d | Força: %d | Resistência: %d | Destreza: %d | Velocidade: %d\n\n", CharacterAttributes.ARCHER_HP, CharacterAttributes.ARCHER_STRENGTH, CharacterAttributes.ARCHER_RESISTANCE, CharacterAttributes.ARCHER_DEXTERITY, CharacterAttributes.ARCHER_SPEED);
-        System.out.println("STEALTH:"); // Alterado de "LADINO:" para "STEALTH:"
+        System.out.println("STEALTH:");
         imprimirDevagar("Rápido e mortal, combina força e destreza para ataques críticos devastadores.", 15);
         System.out.printf(" > HP: %d | Força: %d | Resistência: %d | Destreza: %d | Velocidade: %d\n", CharacterAttributes.STEALTH_HP, CharacterAttributes.STEALTH_STRENGTH, CharacterAttributes.STEALTH_RESISTANCE, CharacterAttributes.STEALTH_DEXTERITY, CharacterAttributes.STEALTH_SPEED);
         System.out.println("-----------------------------------------------------------------");
     }
 
+    //Responsável por executar o turno do heroi
     private void executarTurnoHeroi(Hero heroi) {
         String cabecalho = String.format("\n--- Turno de %s (%s | HP: %d/%d) ---", heroi.getName(), heroi.getType(), heroi.getHP(), heroi.getMaxHP());
         imprimirDevagar(cabecalho, 20);

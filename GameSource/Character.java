@@ -23,19 +23,6 @@ public abstract class Character {
         this.maxHP = HP;
     }
 
-    protected void setTipo(CharacterType tipo) {
-        this.tipo = tipo;
-    }
-
-     public int getMaxHP() {
-        return this.maxHP;
-    }
-
-    public void setHP(int HP) {
-        this.HP = HP;
-        this.maxHP = HP;
-    }
-
     // Getters
     public String getName() { return name; }
     public int getSpeed() { return speed; }
@@ -46,6 +33,10 @@ public abstract class Character {
     public int getPosX() { return posX; }
     public int getPosY() { return posY; }
     public CharacterType getType() { return tipo; }
+    public int getMaxHP() {
+        return this.maxHP;
+    }
+
     //Setters
     public void setPosX(int posX) { this.posX = posX; }
     public void setPosY(int posY) { this.posY = posY; }
@@ -53,6 +44,14 @@ public abstract class Character {
     public void setStrength(int strength) { this.strength = strength; }
     public void setResistance(int resistance) { this.resistance = resistance; }
     public void setDexterity(int dexterity) { this.dexterity = dexterity; }
+    public void setHP(int HP) {
+        this.HP = HP;
+        this.maxHP = HP;
+    }
+    protected void setTipo(CharacterType tipo) {
+        this.tipo = tipo;
+    }
+
 
     public abstract AttackResult realizarAtaque(Character alvo, AttackType tipoAtaque);
 

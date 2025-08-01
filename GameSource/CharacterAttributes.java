@@ -2,8 +2,8 @@ public class CharacterAttributes {
     // Atributos dos Heróis
     public static final int PALADIN_SPEED = 8;
     public static final int PALADIN_STRENGTH = 15;
-    public static final int PALADIN_HP = 120;
-    public static final int PALADIN_RESISTANCE = 12;
+    public static final int PALADIN_HP = 100;
+    public static final int PALADIN_RESISTANCE = 9;
     public static final int PALADIN_DEXTERITY = 7;
 
     public static final int WIZARD_SPEED = 7;
@@ -24,7 +24,7 @@ public class CharacterAttributes {
     public static final int STEALTH_RESISTANCE = 5;
     public static final int STEALTH_DEXTERITY = 15;
 
-    // --- ATRIBUTOS DOS MONSTROS COM RANGE ---
+    // ATRIBUTOS DOS MONSTROS
 
     // ORC (Monstro fraco)
     public static final int ORC_HP_MIN = 30;
@@ -50,7 +50,7 @@ public class CharacterAttributes {
     public static final int WITCH_DEXTERITY_MIN = 5;
     public static final int WITCH_DEXTERITY_MAX = 7;
 
-    // DRAGON (Final boss)
+    // DRAGON (Monstro Forte)
     public static final int DRAGON_HP_MIN = 230;
     public static final int DRAGON_HP_MAX = 270;
     public static final int DRAGON_STRENGTH_MIN = 22;
