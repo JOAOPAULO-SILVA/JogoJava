@@ -1,4 +1,4 @@
-# Documentação do Projeto: Batalha de RPG
+# Jogo de Turnos
 
 ## Visão Geral do Projeto
 
